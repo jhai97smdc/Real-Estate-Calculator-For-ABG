@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes">
+<title>Sample Quotation</title>
+<style>
+  :root{
+    --brand:#0B5AA0;
+    --accent:#E53935;
+    --line:#E6EEF7;
+    --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;background:#f4f6f8;color:#222}
+  header{background:var(--brand);color:#fff;padding:12px;text-align:center;font-weight:700;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+  .wrap{max-width:1000px;margin:10px auto;padding:0 10px;display:grid;grid-template-columns:1fr;gap:12px}
+  .card{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);border:1px solid var(--line)}
+  .card h3{margin:0;padding:8px 12px;background:var(--brand);color:#fff;font-size:13px;border-radius:10px 10px 0 0}
+  .content{padding:10px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  label{display:flex;flex-direction:column;font-size:12px}
+  label span{font-weight:600;margin-bottom:2px}
+  input{padding:6px;border:1px solid #ccc;border-radius:8px;font-size:12px;text-align:right}
+  input:focus{outline:1px solid var(--brand)}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  th, td{border:1px solid #ddd;padding:6px}
+  th{text-align:left;background:#eef6ff;font-weight:700}
+  td{text-align:right}
+  td:first-child{text-align:left}
+  .discount{color:var(--accent);font-weight:600}
+  .hl{background:#eef6ff;font-weight:700;color:var(--brand)}
+  .big{font-size:14px;font-weight:700;color:var(--brand)}
+  .btn-row{display:flex;gap:10px;margin:10px 0}
+  button{flex:1;padding:10px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+  button:hover{opacity:.95}
+  h4{margin-top:14px;color:var(--brand)}
+  @media print{header,.controls{display:none}.wrap{grid-template-columns:1fr}body{background:#fff;font-size:11px}}
+</style>
+</head>
+<body>
+<header>Sample Quotation</header>
+<div class="wrap">
+  <div class="controls">
+    <div class="card"><h3>Project Details</h3>
+      <div class="content grid">
+        <label><span>Project</span><input id="projName"></label>
+        <label><span>Unit</span><input id="projUnit"></label>
+        <label><span>Area (sqm)</span><input id="projArea"></label>
+        <label><span>View</span><input id="projView"></label>
+      </div>
+    </div>
+    <div class="card"><h3>Pricing & Discounts</h3>
+      <div class="content grid">
+        <label><span>List Price</span><input type="number" id="listPrice"></label>
+        <label><span>Standard Discount</span><input id="discStd"></label>
+        <label><span>Special Discount</span><input id="discSpc"></label>
+        <label><span>Additional Discount</span><input id="discAdd"></label>
+        <label><span>Rebate Discount</span><input id="discReb"></label>
+      </div>
+    </div>
+    <div class="card"><h3>Charges & VAT</h3>
+      <div class="content grid">
+        <label><span>Other Charges (%)</span><input type="number" id="otherCharges"></label>
+        <label><span>VAT (%)</span><input type="number" id="vatPct"></label>
+      </div>
+    </div>
+    <div class="card"><h3>Payment Terms</h3>
+      <div class="content grid">
+        <label><span>Downpayment (%)</span><input type="number" id="dpPct"></label>
+        <label><span>Reservation Fee</span><input type="number" id="resFee"></label>
+        <label><span>Downpayment Equity (%)</span><input type="number" id="eqPct"></label>
+        <label><span>Monthly Amortization (months)</span><input type="number" id="eqMonths"></label>
+      </div>
+      <div class="content">
+        <label><input type="radio" name="payOption" value="monthly" checked> Monthly Equity</label>
+        <label><input type="radio" name="payOption" value="spot"> Spot Cash</label>
+      </div>
+    </div>
+    <div class="card"><h3>Bank Financing Inputs</h3>
+      <div class="content grid">
+        <label><span>Interest Rate (%)</span><input type="number" id="bankRate"></label>
+      </div>
+    </div>
+    <div class="card"><h3>Property Consultant Details</h3>
+      <div class="content grid">
+        <label><span>Name</span><input id="agentName"></label>
+        <label><span>Contact</span><input id="agentContact"></label>
+        <label><span>Company</span><input id="agentCompany"></label>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button type="button" onclick="compute()">Calculate</button>
+      <button type="button" onclick="window.print()">Save as PDF</button>
+    </div>
+  </div>
+  <div>
+    <div class="card"><h3>Quotation Summary</h3>
+      <div class="content" id="summary"></div>
+    </div>
+  </div>
+</div>
+<script>
+function peso(n){return "₱"+(isFinite(n)?Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00')}
+function pmt(rate,nper,pv){if(rate===0)return pv/nper;const r=rate;return pv*(r*Math.pow(1+r,nper))/(Math.pow(1+r,nper)-1)}
+function parseDiscountInput(val, base){
+  if(!val) return {amt:0,label:''};
+  val=val.toString().trim();
+  if(val.endsWith('%')){
+    let pct=parseFloat(val.replace('%',''));
+    return {amt:base*(pct/100),label:`(${pct}%)`};
+  } else {
+    let amt=parseFloat(val);
+    if(isNaN(amt)) return {amt:0,label:''};
+    let pct=(amt/base*100).toFixed(2);
+    return {amt:amt,label:`(${pct}% of base)`};
+  }
+}
+function compute(){
+  const listPrice=+document.getElementById('listPrice').value||0;
+  let netPrice=listPrice;
+
+  // Discounts
+  const std=parseDiscountInput(document.getElementById('discStd').value,listPrice);
+  netPrice-=std.amt;
+  const spc=parseDiscountInput(document.getElementById('discSpc').value,netPrice);
+  netPrice-=spc.amt;
+  const add=parseDiscountInput(document.getElementById('discAdd').value,netPrice);
+  netPrice-=add.amt;
+  const reb=parseDiscountInput(document.getElementById('discReb').value,netPrice);
+  netPrice-=reb.amt;
+
+  const ocPct=+document.getElementById('otherCharges').value||0;
+  const vatPct=+document.getElementById('vatPct').value||0;
+  const oc=netPrice*(ocPct/100);
+  const vat=netPrice*(vatPct/100);
+  const TAP=netPrice+oc+vat;
+
+  const dpPct=(+document.getElementById('dpPct').value||0)/100;
+  const resFee=+document.getElementById('resFee').value||0;
+  const dp=TAP*dpPct;
+  const netDp=dp-resFee;
+
+  const eqPct=(+document.getElementById('eqPct').value||0)/100;
+  const eqAmount=TAP*eqPct;
+  const eqMonths=Math.max(+document.getElementById('eqMonths').value||0,1);
+  const opt=document.querySelector('input[name="payOption"]:checked').value;
+  const monthlyEq=(opt==='monthly'&&eqMonths>0)?eqAmount/eqMonths:0;
+
+  const remainingPct=100-(dpPct*100+eqPct*100);
+  const balance=TAP*(remainingPct/100);
+
+  const bankRate=(+document.getElementById('bankRate').value||0)/100;const r=bankRate/12;
+  const m5=pmt(r,60,balance),m10=pmt(r,120,balance),m15=pmt(r,180,balance),m20=pmt(r,240,balance);
+
+  const projName=document.getElementById('projName').value||'';
+  const projArea=document.getElementById('projArea').value||'';
+  const projView=document.getElementById('projView').value||'';
+  const projUnit=document.getElementById('projUnit').value||'';
+  const agentName=document.getElementById('agentName').value||'';
+  const agentContact=document.getElementById('agentContact').value||'';
+  const agentCompany=document.getElementById('agentCompany').value||'';
+
+  // Project details table
+  let html=`<h4>Project Details</h4><table>`;
+  html+=`<tr><th>Project</th><td>${projName}</td></tr>`;
+  html+=`<tr><th>Area (sqm)</th><td>${projArea}</td></tr>`;
+  html+=`<tr><th>View</th><td>${projView}</td></tr>`;
+  html+=`<tr><th>Unit</th><td>${projUnit}</td></tr>`;
+  html+=`</table>`;
+
+  // Pricing & Discounts
+  html+=`<h4>Pricing & Discounts</h4><table>`;
+  html+=`<tr><td>List Price</td><td>${peso(listPrice)}</td></tr>`;
+  if(std.amt) html+=`<tr class="discount"><td>Standard Discount ${std.label}</td><td>- ${peso(std.amt)}</td></tr>`;
+  if(spc.amt) html+=`<tr class="discount"><td>Special Discount ${spc.label}</td><td>- ${peso(spc.amt)}</td></tr>`;
+  if(add.amt) html+=`<tr class="discount"><td>Additional Discount ${add.label}</td><td>- ${peso(add.amt)}</td></tr>`;
+  if(reb.amt) html+=`<tr class="discount"><td>Rebate Discount ${reb.label}</td><td>- ${peso(reb.amt)}</td></tr>`;
+  html+=`<tr class="hl"><td>Net List Price</td><td class="big">${peso(netPrice)}</td></tr>`;
+  html+=`</table>`;
+
+  // Payment Term Details
+  html+=`<h4>Payment Term Details</h4><table>`;
+  html+=`<tr><td>Other Charges (${ocPct}%)</td><td>${peso(oc)}</td></tr>`;
+  html+=`<tr><td>VAT (${vatPct}%)</td><td>${peso(vat)}</td></tr>`;
+  html+=`<tr class="hl"><td>Total Amount Payable</td><td class="big">${peso(TAP)}</td></tr>`;
+  html+=`<tr><td>Downpayment (${(dpPct*100).toFixed(2)}%)</td><td>${peso(dp)}</td></tr>`;
+  html+=`<tr><td>Less Reservation Fee</td><td>- ${peso(resFee)}</td></tr>`;
+  html+=`<tr><td>Net Downpayment</td><td>${peso(netDp)}</td></tr>`;
+  if(opt==='monthly'){ 
+    html+=`<tr><td>Downpayment Equity (${(eqPct*100).toFixed(2)}%)</td><td>${peso(eqAmount)}</td></tr>`;
+    html+=`<tr><td>Monthly Amortization (${eqMonths} months)</td><td>${peso(monthlyEq)} / mo</td></tr>`;
+  }
+  html+=`<tr class="hl"><td>Remaining Balance (${remainingPct.toFixed(2)}%)</td><td class="big">${peso(balance)}</td></tr>`;
+  html+=`</table>`;
+
+  // Property Consultant
+  html+=`<h4>Property Consultant</h4>`;
+  html+=`<div><b>Name:</b> ${agentName||''}</div>`;
+  html+=`<div><b>Contact:</b> ${agentContact||''}</div>`;
+  html+=`<div><b>Company:</b> ${agentCompany||''}</div>`;
+
+  // Bank Financing
+  html+=`<h4>Estimated Monthly Amortization (At the Bank)</h4>`;
+  html+=`<table>`;
+  html+=`<tr><td>Loanable Amount (${remainingPct.toFixed(2)}%)</td><td>${peso(balance)}</td></tr>`;
+  html+=`<tr><td>Interest Rate</td><td>${(bankRate*100).toFixed(2)}% p.a.</td></tr>`;
+  html+=`</table>`;
+
+  html+=`<h4>Estimated Monthly Amortization</h4><table>`;
+  html+=`<tr><td>5 yrs (60 mos)</td><td>${peso(m5)}</td></tr>`;
+  html+=`<tr><td>10 yrs (120 mos)</td><td>${peso(m10)}</td></tr>`;
+  html+=`<tr><td>15 yrs (180 mos)</td><td>${peso(m15)}</td></tr>`;
+  html+=`<tr><td>20 yrs (240 mos)</td><td>${peso(m20)}</td></tr>`;
+  html+=`</table>`;
+
+  document.getElementById('summary').innerHTML=html;
+}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',compute));
+document.querySelectorAll('input[name="payOption"]').forEach(el=>el.addEventListener('change',compute));
+compute();
+</script>
+</body>
+</html>
