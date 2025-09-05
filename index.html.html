@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unified Unit Calculator – Summary + Inputs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#0B5AA0; --accent:#F59E0B; --ink:#111827; --muted:#6B7280; --bg:#F8FAFC; --card:#FFFFFF; --good:#059669; --warn:#B91C1C;
+    --line:#E5E7EB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  header{padding:18px 16px;background:var(--brand);color:#fff;position:sticky;top:0;z-index:2}
+  header h1{margin:0;font-size:20px;font-weight:800}
+  header small{opacity:.9}
+  .wrap{max-width:1200px;margin:22px auto;padding:0 16px}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+  .card{grid-column:span 12;background:var(--card);border-radius:14px;box-shadow:0 8px 24px rgba(2,6,23,.06);padding:18px}
+  .two{grid-column:span 12}
+  @media(min-width:1080px){.two{grid-column:span 6}}
+  h2{margin:0 0 10px;font-size:16px;font-weight:800;color:var(--brand)}
+  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 6px}
+  input,select,textarea{
+    width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit
+  }
+  input[type="number"]{text-align:right}
+  .inline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .inline-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .row{display:grid;grid-template-columns:1fr 180px;gap:12px;align-items:center}
+  .money{font-variant-numeric:tabular-nums}
+  .muted{color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:var(--brand);color:#fff}
+  button.secondary{background:#E5E7EB;color:#111827}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid #F1F5F9;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  tfoot td{font-weight:800}
+  .footnote{font-size:12px;color:var(--muted);margin-top:8px}
+  .brandbar{display:flex;gap:12px;align-items:center}
+  /* --- Hope-style summary --- */
+  .hope{border:3px solid #162A55;padding:16px;border-radius:12px}
+  .hope .hdr{display:flex;gap:12px;align-items:center;justify-content:space-between;border:2px solid #162A55;padding:10px;border-radius:10px}
+  .hope .hdr .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px}
+  .hope small.note{display:block;text-align:center;margin:8px 0;font-weight:800}
+  .hope h3{margin:0;font-size:18px;color:#162A55}
+  .hope .tbl{width:100%;border-collapse:collapse;margin-top:6px}
+  .hope .tbl td{padding:8px 6px;border-bottom:1px solid #E2E8F0}
+  .hope .tbl td:nth-child(2){text-align:right}
+  .hope .em{font-weight:800}
+  .hope .yellow{background:#FFF9C2}
+  .hope .total{background:#E6F0FF;border-radius:8px;padding:10px 12px;font-weight:800;display:flex;justify-content:space-between;margin-top:8px}
+  .hope .block{border:2px solid #162A55;border-radius:10px;padding:10px;margin-top:12px}
+  .hope .est{border:2px solid #9CA3AF;border-radius:10px;padding:8px;margin-top:10px}
+  @media(max-width:920px){
+    .inline,.inline-3{grid-template-columns:1fr 1fr}
+    .hope .hdr .meta{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:560px){
+    .inline,.inline-3{grid-template-columns:1fr}
+    .row{grid-template-columns:1fr}
+  }
+  /* Print */
+  @media print{
+    header,.actions{display:none!important}
+    body{background:#fff}
+    .wrap{max-width:100%}
+    .card{box-shadow:none;border:0;padding:0}
+    .grid{gap:12px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brandbar">
+    <div>
+      <h1>Unified Unit Calculator</h1>
+      <small>Hope-style summary + Full inputs + Bank amortization</small>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <!-- LEFT: Hope-style visual summary -->
+    <section class="card two">
+      <div class="hope">
+        <div class="hdr">
+          <div class="titlebar">
+            <h3 id="projName"></h3>
+          </div>
+          <div class="meta">
+            <div><b>AREA:</b> <span id="metaArea">0</span> sqm</div>
+            <div><b>UNIT NO.:</b> <span id="metaUnit">–</span></div>
+            <div><b>UNIT TYPE:</b> <span id="metaType">Flexi Suite</span></div>
+            <div><b>VIEW:</b> <span id="metaView">–</span></div>
+          </div>
+        </div>
+
+        <small class="note">READY FOR OCCUPANCY • Auto-discounts & charges</small>
+
+        <table class="tbl">
+          <tr><td>Selling Price</td><td class="money" id="hSelling">₱0.00</td></tr>
+          <tr><td><span class="yellow">Special Discount</span></td><td class="money yellow" id="hSpecial">₱0.00</td></tr>
+          <tr class="em"><td>Discounted Price</td><td class="money" id="hDiscounted">₱0.00</td></tr>
+          <tr><td>Other Charges (<span id="hOtherPct">0</span>%)</td><td class="money" id="hOther">₱0.00</td></tr>
+          <tr><td>Add: VAT (<span id="hVatPct">0</span>%)</td><td class="money" id="hVat">₱0.00</td></tr>
+        </table>
+
+        <div class="total">
+          <div>TOTAL AMOUNT PAYABLE</div>
+          <div class="money" id="hTotal">₱0.00</div>
+        </div>
+
+        <div class="block">
+          <h3 style="margin:0 0 6px">Payment Term Details</h3>
+          <table class="tbl">
+            <tr><td>Downpayment (<span id="hDpPct">0</span>%)</td><td class="money" id="hDp">₱0.00</td></tr>
+            <tr><td><span class="warn">Less Reservation Fee</span></td><td class="money">-<span id="hRes">₱0.00</span></td></tr>
+            <tr class="em"><td>Net Downpayment</td><td class="money" id="hNetDp">₱0.00</td></tr>
+            <tr><td>Remaining Balance</td><td class="money" id="hRemain">₱0.00</td></tr>
+          </table>
+          <div class="est">
+            <b>Estimated Monthly (Bank)</b>
+            <table class="tbl" style="margin:6px 0 0">
+              <thead>
+                <tr><th>Tenor</th><th>Monthly (₱)</th><th>Assumed Rate</th></tr>
+              </thead>
+              <tbody id="hBankRows"></tbody>
+            </table>
+          </div>
+          <div class="footnote">* Monthly = PMT(r/12, n, PV). Values are estimates only.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Inputs + detailed tables -->
+    <section class="card two">
+      <h2>Unit Details</h2>
+      <div class="inline">
+        <div>
+          <label>Project</label>
+          <input id="project" placeholder="Enter Project Name" />
+        </div>
+        <div>
+          <label>Unit No.</label>
+          <input id="unitNo" placeholder="Tower / Floor / Unit" />
+        </div>
+        <div>
+          <label>Area (sqm)</label>
+          <input id="area" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>View</label>
+          <input id="view" placeholder="Residential View" />
+        </div>
+      </div>
+
+      <div class="inline" style="margin-top:10px">
+        <div>
+          <label>Selling Price (₱)</label>
+          <input id="selling" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>Spot Discount (%)</label>
+          <input id="spotPct" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>Special Discount (₱)</label>
+          <input id="specialLess" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>Reservation Fee (₱)</label>
+          <input id="reservation" type="number" step="0.01" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card two">
+      <h2>Other Charges, VAT & Downpayment</h2>
+      <div class="inline-3">
+        <div>
+          <label>Other Charges (%)</label>
+          <input id="otherPct" type="number" step="0.0001" />
+        </div>
+        <div>
+          <label>VAT (%)</label>
+          <input id="vatPct" type="number" step="0.0001" />
+        </div>
+        <div>
+          <label>Downpayment (%)</label>
+          <input id="dpPct" type="number" step="0.0001" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card two">
+      <h2>Breakdown Summary</h2>
+      <table>
+        <tbody id="summaryBody"></tbody>
+        <tfoot>
+          <tr>
+            <td>Total Amount Payable</td>
+            <td class="money" id="totalPayable">₱0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="actions">
+        <button id="printBtn">Print / Save as PDF</button>
+        <button class="secondary" id="resetBtn">Reset</button>
+        <button class="secondary" id="saveBtn">Save to Browser</button>
+        <button class="secondary" id="loadBtn">Load Saved</button>
+      </div>
+      <div class="footnote">Saved data uses your browser’s local storage (per device). No server needed.</div>
+    </section>
+
+    <section class="card two">
+      <h2>Payment Terms</h2>
+      <table>
+        <tbody id="termsBody"></tbody>
+      </table>
+    </section>
+
+    <section class="card two">
+      <h2>Bank Amortization</h2>
+      <div class="inline">
+        <div>
+          <label>Annual Interest (%)</label>
+          <input id="rate" type="number" step="0.0001" value="6.5" />
+        </div>
+        <div>
+          <label>Loan Tenors (years, comma-separated)</label>
+          <input id="tenors" value="10,15,20" />
+        </div>
+        <div>
+          <label>Grace Months (optional)</label>
+          <input id="grace" type="number" step="1" value="0" />
+        </div>
+        <div>
+          <label>Show Effective Rate Note</label>
+          <select id="showRateNote">
+            <option value="yes" selected>Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Tenor</th><th>Monthly (₱)</th><th>Assumed Rate</th></tr>
+        </thead>
+        <tbody id="bankBody"></tbody>
+      </table>
+      <div id="rateNote" class="footnote">
+        * Monthly = PMT(r/12, n, PV). Change the interest or years anytime. Values are estimates.
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  const peso = n => "₱" + (isFinite(n) ? n.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}) : "0.00");
+  const num  = id => parseFloat(document.getElementById(id).value || 0);
+
+  function compute(){
+    const selling     = num('selling');
+    const spotPct     = num('spotPct')/100;
+    const specialLess = num('specialLess');
+    const otherPct    = num('otherPct')/100;
+    const vatPct      = num('vatPct')/100;
+    const dpPct       = num('dpPct')/100;
+    const reservation = num('reservation');
+
+    const spotDisc    = selling * spotPct;
+    const discounted  = selling - spotDisc - specialLess;
+    const otherChg    = discounted * otherPct;
+    const vat         = discounted * vatPct;
+    const total       = discounted + otherChg + vat;
+
+    const dp          = total * dpPct;
+    const netDp       = Math.max(dp - reservation, 0);
+    const remaining   = total - dp;
+
+    const summary = [
+      ["Selling Price", selling],
+      [`Spot Discount (${(spotPct*100).toFixed(2)}%)`, -spotDisc],
+      ["Special Discount", -specialLess],
+      ["Discounted Price", discounted, true],
+      [`Other Charges (${(otherPct*100).toFixed(2)}%)`, otherChg],
+      [`Add: VAT (${(vatPct*100).toFixed(2)}%)`, vat],
+    ];
+    document.getElementById('summaryBody').innerHTML = summary.map(([label, value, emph]) =>
+      `<tr${emph? ' style="font-weight:800"':''}>
+        <td>${label}</td><td class="money">${peso(value)}</td>
+      </tr>`).join("");
+    document.getElementById('totalPayable').textContent = peso(total);
+
+    document.getElementById('termsBody').innerHTML = `
+      <tr><td>Downpayment (${(dpPct*100).toFixed(2)}%)</td><td class="money">${peso(dp)}</td></tr>
+      <tr><td>Less Reservation Fee</td><td class="money">-${peso(reservation)}</td></tr>
+      <tr style="font-weight:800"><td>Net Downpayment</td><td class="money">${peso(netDp)}</td></tr>
+      <tr><td>Remaining Balance</td><td class="money">${peso(remaining)}</td></tr>`;
+
+    document.getElementById('projName').textContent = document.getElementById('project').value || '';
+    document.getElementById('metaArea').textContent = (document.getElementById('area').value || 0);
+    document.getElementById('metaUnit').textContent = document.getElementById('unitNo').value || '—';
+    document.getElementById('metaView').textContent = document.getElementById('view').value || '—';
+
+    document.getElementById('hSelling').textContent    = peso(selling);
+    document.getElementById('hSpecial').textContent    = peso(specialLess || 0);
+    document.getElementById('hDiscounted').textContent = peso(discounted);
+    document.getElementById('hOtherPct').textContent   = (otherPct*100).toFixed(2);
+    document.getElementBy
