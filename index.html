@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes">
+<title>Sample Quotation</title>
+<style>
+  :root{--brand:#0B5AA0;--accent:#E53935;--line:#E6EEF7;--card:#fff;--muted:#6b7280;}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;background:#f4f6f8;color:#222}
+  header{background:var(--brand);color:#fff;padding:12px;text-align:center;font-weight:700;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+  .wrap{max-width:1000px;margin:10px auto;padding:0 10px;display:grid;grid-template-columns:1fr;gap:12px}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);border:1px solid var(--line)}
+  .card h3{margin:0;padding:8px 12px;background:var(--brand);color:#fff;font-size:13px}
+  .content{padding:10px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  @media (max-width:560px){.grid{grid-template-columns:1fr}}
+  label{display:flex;flex-direction:column;font-size:12px}
+  label span{font-weight:600;margin-bottom:2px}
+  input{padding:8px;border:1px solid #d1d5db;border-radius:10px;font-size:12px;text-align:right}
+  input:focus{outline:1px solid var(--brand)}
+  input[readonly]{background:#f3f4f6;color:#555;cursor:not-allowed}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  th, td{border:1px solid #e5e7eb;padding:6px}
+  th{text-align:left;background:#eef6ff;font-weight:700}
+  td{text-align:right}
+  td:first-child{text-align:left;width:12%}
+  .discount{color:var(--accent);font-weight:600}
+  .hl{background:#eef6ff;font-weight:700;color:var(--brand)}
+  .big{font-size:14px;font-weight:700;color:var(--brand)}
+  .btn-row{display:flex;gap:10px;margin:10px 0}
+  button{flex:1;padding:10px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+  .options{display:flex;gap:16px;flex-wrap:wrap;padding:0 10px 10px}
+  .options label{flex-direction:row;align-items:center;gap:6px;font-weight:600}
+</style>
+</head>
+<body>
+<header>Sample Quotation</header>
+<div class="wrap">
+
+  <div class="card">
+    <h3>Quotation Summary</h3>
+    <div class="content" id="summary"></div>
+  </div>
+</div>
+
+<script>
+function peso(n){return "₱"+(isFinite(n)?Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00')}
+function buildRow(pct, label, value, cls=""){return `<tr class="${cls}"><td>${pct||""}</td><td>${label}</td><td>${value}</td></tr>`}
+
+function demo(){
+  let html=`<h4>Pricing & Discounts</h4><table>`;
+  html+=buildRow("", "List Price", peso(5660000));
+  html+=buildRow("21%", "Standard Discount", "- "+peso(1188600), "discount");
+  html+=buildRow("5%", "Special Discount", "- "+peso(200000), "discount");
+  html+=buildRow("", "Net List Price", peso(4271400), "hl");
+  html+="</table>";
+
+  html+=`<h4>Payment Term Details</h4><table>`;
+  html+=buildRow("8.5%", "Other Charges", peso(363069));
+  html+=buildRow("12%", "VAT", peso(512568));
+  html+=buildRow("", "Total Amount Payable", peso(5147037), "hl");
+  html+=buildRow("5%", "Downpayment", peso(257351.85));
+  html+=buildRow("", "Less Reservation Fee", "- "+peso(30000));
+  html+=buildRow("", "Net Downpayment", peso(227351.85));
+  html+=buildRow("95%", "Remaining Balance", peso(4889685.15), "hl");
+  html+="</table>";
+
+  html+=`<h4>Estimated Monthly Amortization (At the Bank)</h4><table>`;
+  html+=`<tr><td>Loanable Amount</td><td>${peso(4889685.15)}</td></tr>`;
+  html+=`<tr><td>Interest Rate</td><td>6.5%</td></tr>`;
+  html+=`<tr><td>10 yrs</td><td>${peso(55521.39)}</td></tr>`;
+  html+=`<tr><td>15 yrs</td><td>${peso(42594.41)}</td></tr>`;
+  html+=`<tr><td>20 yrs</td><td>${peso(36456.18)}</td></tr>`;
+  html+="</table>";
+
+  document.getElementById('summary').innerHTML=html;
+}
+demo();
+</script>
+</body>
+</html>
