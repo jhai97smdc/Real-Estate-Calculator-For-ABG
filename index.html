@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Estate Quotation Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body {font-family:'Roboto',sans-serif;background:#f4f7fb;margin:0;padding:20px;color:#333;}
+  h1 {text-align:center;color:#1a73e8;font-size:24px;margin-bottom:20px;}
+  .card {background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);margin-bottom:20px;padding:20px;}
+  .card h2 {font-size:18px;margin-top:0;margin-bottom:16px;color:#1a56db;border-left:4px solid #1a73e8;padding-left:10px;}
+  table {width:100%;border-collapse:collapse;}
+  th,td {padding:10px;text-align:left;font-size:14px;vertical-align:middle;}
+  tbody tr:nth-child(odd) {background:#f9fbfd;}
+  tbody tr.highlight {background:#e8f0fe;font-weight:bold;color:#1a73e8;}
+  td.right {text-align:right;}
+  td.center {text-align:center;}
+  input[type="text"],input[type="number"] {border:none;border-bottom:1px solid #ccc;padding:4px;width:100%;background:transparent;font-size:14px;}
+  input:focus {outline:none;border-color:#1a73e8;}
+  .radio-row {display:flex;gap:12px;margin:8px 0 14px;}
+  .radio-row label {padding:6px 12px;border:1px solid #ccc;border-radius:20px;background:#fafafa;cursor:pointer;font-size:13px;}
+  .btn {display:inline-block;background:#1a73e8;color:#fff;padding:10px 18px;border-radius:30px;text-decoration:none;font-size:14px;transition:background .3s;border:none;cursor:pointer;margin-right:10px;}
+  .btn:hover {background:#155ab6;}
+  .btn.secondary {background:#6b7280;}
+  .consultant {margin-top:20px;border-top:2px solid #dbeafe;padding-top:10px;}
+  .consultant h3 {color:#1a73e8;font-size:16px;margin-bottom:12px;text-align:center;}
+</style>
+</head>
+<body>
+
+<h1>Real Estate Quotation Calculator</h1>
+
+<div class="card">
+  <h2>Project Details</h2>
+  <table>
+    <tr><th>Project Name</th><td><input id="projName" type="text" placeholder="South Residences"></td></tr>
+    <tr><th>Unit Area (sqm)</th><td><input id="unitArea" type="number" step="0.01" placeholder="36.53"></td></tr>
+    <tr><th>View</th><td><input id="view" type="text" placeholder="Mall View"></td></tr>
+    <tr><th>Unit</th><td><input id="unitCode" type="text" placeholder="B030916"></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Pricing & Discounts</h2>
+  <table>
+    <tr><th>List Price (₱)</th><td><input id="listPrice" type="number" step="0.01" placeholder="5532000"></td></tr>
+    <tr><th>Other Charges (₱)</th><td><input id="otherCharges" type="number" step="0.01" placeholder="300000"></td></tr>
+    <tr><th>Standard Discount</th><td>% <input id="disc1Pct" type="number" step="0.0001" placeholder="21"> or ₱ <input id="disc1AmtIn" type="number" step="0.01"></td></tr>
+    <tr><th>Special Discount</th><td>% <input id="disc2Pct" type="number" step="0.0001" placeholder="5"> or ₱ <input id="disc2AmtIn" type="number" step="0.01"></td></tr>
+    <tr><th>Additional Discount</th><td>% <input id="disc3Pct" type="number" step="0.0001" placeholder="1"> or ₱ <input id="disc3AmtIn" type="number" step="0.01"></td></tr>
+    <tr><th>Rebate Discount</th><td>% <input id="disc4Pct" type="number" step="0.0001" placeholder="1.5"> or ₱ <input id="disc4AmtIn" type="number" step="0.01"></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Payment Term</h2>
+  <div class="radio-row">
+    <label><input type="radio" name="pt" value="spread" checked> Spread DP</label>
+    <label><input type="radio" name="pt" value="spot"> Spot Downpayment</label>
+    <label><input type="radio" name="pt" value="split"> Split (DP + Monthly)</label>
+  </div>
+
+  <table id="spreadFields">
+    <tr><th>Downpayment (Equity %)</th><td><input id="spreadEquityPct" type="number" step="0.01" placeholder="5"></td></tr>
+    <tr><th>Reservation Fee</th><td><input id="spreadRF" type="number" step="0.01" placeholder="30000"></td></tr>
+    <tr><th>No. of Months</th><td><input id="spreadMonths" type="number" step="1" placeholder="12"></td></tr>
+  </table>
+
+  <table id="spotFields" style="display:none">
+    <tr><th>Downpayment %</th><td><input id="spotPct" type="number" step="0.01" placeholder="5"></td></tr>
+    <tr><th>Reservation Fee</th><td><input id="spotRF" type="number" step="0.01" placeholder="30000"></td></tr>
+  </table>
+
+  <table id="splitFields" style="display:none">
+    <tr><th>Spot Downpayment %</th><td><input id="splitSpotPct" type="number" step="0.01" placeholder="5"></td></tr>
+    <tr><th>Reservation Fee</th><td><input id="splitRF" type="number" step="0.01" placeholder="30000"></td></tr>
+    <tr><th>Downpayment (Equity %)</th><td><input id="splitEquityPct" type="number" step="0.01" placeholder="5"></td></tr>
+    <tr><th>No. of Months</th><td><input id="splitMonths" type="number" step="1" placeholder="12"></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Bank Financing</h2>
+  <table>
+    <tr><th>Interest Rate (per annum %)</th><td><input id="bankRate" type="number" step="0.01" placeholder="7"></td></tr>
+  </table>
+</div>
+
+<p style="text-align:center;margin-top:20px">
+  <button id="btnCompute" class="btn">Compute</button>
+  <button id="btnPDF" class="btn secondary">Save as PDF</button>
+</p>
+
+<div class="card">
+  <h2>Quotation Summary</h2>
+  <table id="summaryTable">
+    <tbody>
+      <tr><td>List Price</td><td id="sList" class="right"></td></tr>
+      <tr id="rowDisc1"><td>Standard Discount</td><td id="sDisc1Amt" class="right"></td></tr>
+      <tr id="rowDisc2"><td>Special Discount</td><td id="sDisc2Amt" class="right"></td></tr>
+      <tr id="rowDisc3"><td>Additional Discount</td><td id="sDisc3Amt" class="right"></td></tr>
+      <tr id="rowDisc4"><td>Rebate Discount</td><td id="sDisc4Amt" class="right"></td></tr>
+      <tr class="highlight"><td>Net List Price (NLP)</td><td id="sNetList" class="right"></td></tr>
+      <tr><td>Other Charges</td><td id="sOC" class="right"></td></tr>
+      <tr><td id="sVATLabel">VAT</td><td id="sVAT" class="right"></td></tr>
+      <tr class="highlight"><td>Total Amount Payable (TAP)</td><td id="sTAP" class="right"></td></tr>
+      <tr class="highlight"><td>Remaining Balance</td><td id="sRemain" class="right"></td></tr>
+      <tr class="highlight"><td>Loanable Amount (Bank)</td><td id="sLoanable" class="right"></td></tr>
+      <tr><td>Estimated Bank Amortization (5y)</td><td id="sBank5" class="right"></td></tr>
+      <tr><td>Estimated Bank Amortization (10y)</td><td id="sBank10" class="right"></td></tr>
+      <tr><td>Estimated Bank Amortization (15y)</td><td id="sBank15" class="right"></td></tr>
+      <tr><td>Estimated Bank Amortization (20y)</td><td id="sBank20" class="right"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="consultant">
+    <h3>Property Consultant</h3>
+    <table>
+      <tr><th>Name</th><td><input id="consultName" type="text" placeholder="Your Name"></td></tr>
+      <tr><th>Mobile No.</th><td><input id="consultContact" type="text" placeholder="09XXXXXXXXX"></td></tr>
+      <tr><th>Position</th><td><input id="consultPosition" type="text" placeholder="Property Consultant"></td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+const fmt=x=>!isFinite(x)?'':Number(x).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const val=id=>parseFloat(document.getElementById(id)?.value)||0;
+function applyPT(selected){
+  document.getElementById("spreadFields").style.display=selected==="spread"?"table":"none";
+  document.getElementById("spotFields").style.display=selected==="spot"?"table":"none";
+  document.getElementById("splitFields").style.display=selected==="split"?"table":"none";
+}
+document.querySelectorAll('input[name="pt"]').forEach(r=>r.addEventListener('change',e=>applyPT(e.target.value)));
+
+function computeAll(){
+  const list=val('listPrice');
+  function discAmount(pctId, amtId, base){
+    const pct=val(pctId), amt=val(amtId);
+    if(amt>0){ return amt; }
+    return base*(pct/100);
+  }
+  const d1Amt=discAmount('disc1Pct','disc1AmtIn',list);
+  const after1=list-d1Amt;
+  const d2Amt=discAmount('disc2Pct','disc2AmtIn',after1);
+  const after2=after1-d2Amt;
+  const d3Amt=discAmount('disc3Pct','disc3AmtIn',after2);
+  const after3=after2-d3Amt;
+  const d4Amt=discAmount('disc4Pct','disc4AmtIn',after3);
+  const netList=after3-d4Amt;
+
+  const oc=val('otherCharges');
+  const vatExempt=netList<=3600000&&netList>0;
+  const vat=vatExempt?0:netList*0.12;
+  document.getElementById('sVATLabel').textContent=vatExempt?'VAT (Exempt)':'VAT';
+
+  const tap=netList+oc+vat;
+  const pt=document.querySelector('input[name="pt"]:checked').value;
+  let remain=tap;
+  if(pt==='spread'){ remain=tap-(tap*(val('spreadEquityPct')/100)); }
+  if(pt==='spot'){ remain=tap-(tap*(val('spotPct')/100)); }
+  if(pt==='split'){ remain=tap-((tap*(val('splitSpotPct')/100))+(tap*(val('splitEquityPct')/100))); }
+  const loanable=remain;
+  const rate=val('bankRate')/100/12;
+  function pmt(P,i,n){if(!P||!i||!n)return 0;return P*i/(1-Math.pow(1+i,-n));}
+  const bank5=pmt(loanable,rate,60),bank10=pmt(loanable,rate,120),bank15=pmt(loanable,rate,180),bank20=pmt(loanable,rate,240);
+
+  document.getElementById('sList').textContent=fmt(list);
+  document.getElementById('sDisc1Amt').textContent=d1Amt?fmt(d1Amt):'';
+  document.getElementById('sDisc2Amt').textContent=d2Amt?fmt(d2Amt):'';
+  document.getElementById('sDisc3Amt').textContent=d3Amt?fmt(d3Amt):'';
+  document.getElementById('sDisc4Amt').textContent=d4Amt?fmt(d4Amt):'';
+  document.getElementById('rowDisc1').style.display=d1Amt?'' :'none';
+  document.getElementById('rowDisc2').style.display=d2Amt?'' :'none';
+  document.getElementById('rowDisc3').style.display=d3Amt?'' :'none';
+  document.getElementById('rowDisc4').style.display=d4Amt?'' :'none';
+
+  document.getElementById('sNetList').textContent=fmt(netList);
+  document.getElementById('sOC').textContent=fmt(oc);
+  document.getElementById('sVAT').textContent=fmt(vat);
+  document.getElementById('sTAP').textContent=fmt(tap);
+  document.getElementById('sRemain').textContent=fmt(remain);
+  document.getElementById('sLoanable').textContent=fmt(loanable);
+  document.getElementById('sBank5').textContent=fmt(bank5);
+  document.getElementById('sBank10').textContent=fmt(bank10);
+  document.getElementById('sBank15').textContent=fmt(bank15);
+  document.getElementById('sBank20').textContent=fmt(bank20);
+}
+document.getElementById('btnCompute').addEventListener('click',computeAll);
+document.getElementById('btnPDF').addEventListener('click',()=>window.print());
+applyPT(document.querySelector('input[name="pt"]:checked').value);
+</script>
+</body>
+</html>
