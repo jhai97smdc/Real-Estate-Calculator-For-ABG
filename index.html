@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes">
+<title>Sample Quotation</title>
+<style>
+  :root{--brand:#0B5AA0;--accent:#E53935;--line:#E6EEF7;--card:#fff;--muted:#6b7280;}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;background:#f4f6f8;color:#222}
+  header{background:var(--brand);color:#fff;padding:12px;text-align:center;font-weight:700;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+  .wrap{max-width:1000px;margin:10px auto;padding:0 10px;display:grid;grid-template-columns:1fr;gap:12px}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);border:1px solid var(--line)}
+  .card h3{margin:0;padding:8px 12px;background:var(--brand);color:#fff;font-size:13px}
+  .content{padding:10px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  @media (max-width:560px){.grid{grid-template-columns:1fr}}
+  label{display:flex;flex-direction:column;font-size:12px}
+  label span{font-weight:600;margin-bottom:2px}
+  input{padding:8px;border:1px solid #d1d5db;border-radius:10px;font-size:12px;text-align:right}
+  input:focus{outline:1px solid var(--brand)}
+  input[readonly]{background:#f3f4f6;color:#555;cursor:not-allowed}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  th, td{border:1px solid #e5e7eb;padding:6px}
+  th{text-align:left;background:#eef6ff;font-weight:700}
+  td{text-align:right}
+  td:first-child{text-align:left;width:12%}
+  .discount{color:var(--accent);font-weight:600}
+  .hl{background:#eef6ff;font-weight:700;color:var(--brand)}
+  .big{font-size:14px;font-weight:700;color:var(--brand)}
+  .btn-row{display:flex;gap:10px;margin:10px 0}
+  button{flex:1;padding:10px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+  .options{display:flex;gap:16px;flex-wrap:wrap;padding:0 10px 10px}
+  .options label{flex-direction:row;align-items:center;gap:6px;font-weight:600}
+</style>
+</head>
+<body>
+<header>Sample Quotation</header>
+<div class="wrap">
+
+  <div class="card">
+    <h3>Project Details</h3>
+    <div class="content grid">
+      <label><span>Project</span><input id="projName"></label>
+      <label><span>Area (sqm)</span><input id="projArea"></label>
+      <label><span>View</span><input id="projView"></label>
+      <label><span>Unit</span><input id="projUnit"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Pricing & Discounts</h3>
+    <div class="content grid">
+      <label><span>List Price</span><input id="listPrice" type="number" placeholder="e.g. 5532000"></label>
+      <label><span>Discount (%) or Amount</span><input id="discount" type="text" placeholder="e.g. 5% or 200000"></label>
+      <label><span>Special Discount (%) or Amount</span><input id="specialDisc" type="text" placeholder="e.g. 3% or 150000"></label>
+      <label><span>Additional Discount (%) or Amount</span><input id="addDisc" type="text" placeholder="e.g. 1% or 50000"></label>
+      <label><span>Rebate Discount (%) or Amount</span><input id="rebateDisc" type="text" placeholder="e.g. 1.5% or 30000"></label>
+      <label><span>Net List Price</span><input id="netListPrice" readonly></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Payment Term Details</h3>
+    <div class="content grid">
+      <label><span>Other Charges (%)</span><input id="otherCharges" type="number" placeholder="e.g. 8.5"></label>
+      <label><span>VAT</span><input id="vatField" readonly></label>
+      <label><span>Total Amount Payable</span><input id="tap" readonly></label>
+      <label><span>Downpayment (%)</span><input id="dpPct" type="number" placeholder="e.g. 5"></label>
+      <label><span>Reservation Fee</span><input id="resFee" type="number" placeholder="e.g. 25000"></label>
+      <label><span>Net Downpayment</span><input id="netDp" readonly></label>
+      <label><span>Equity Months</span><input id="eqMonths" type="number" placeholder="e.g. 12"></label>
+      <label><span>Monthly Amortization</span><input id="eqMonthly" readonly></label>
+      <label><span>Remaining Balance</span><input id="remainBal" readonly></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Estimated Monthly Amortization (At the Bank)</h3>
+    <div class="content" id="bank"></div>
+  </div>
+
+  <div class="card">
+    <h3>Property Consultant</h3>
+    <div class="content grid">
+      <label><span>Name</span><input id="agentName"></label>
+      <label><span>Contact</span><input id="agentContact"></label>
+      <label><span>Email</span><input id="agentEmail"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Quotation Summary</h3>
+    <div class="content" id="summary"></div>
+  </div>
+
+  <div class="btn-row">
+    <button onclick="calculate()">Calculate</button>
+    <button onclick="window.print()">Save as PDF</button>
+  </div>
+
+</div>
+
+<script>
+function peso(n){return "₱"+(isFinite(n)?Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00')}
+function parseInput(val){
+  if(!val) return 0;
+  if(val.toString().includes("%")) return parseFloat(val)/100;
+  return parseFloat(val);
+}
+function buildRow(pct,label,value,cls=""){return `<tr class="${cls}"><td>${pct||""}</td><td>${label}</td><td>${value}</td></tr>`}
+function monthlyPayment(P,r,n){r=r/12; n=n*12; return (P*r)/(1-Math.pow(1+r,-n));}
+
+function calculate(){
+  let lp=parseFloat(document.getElementById('listPrice').value)||0;
+  let d1=parseInput(document.getElementById('discount').value);
+  let d2=parseInput(document.getElementById('specialDisc').value);
+  let d3=parseInput(document.getElementById('addDisc').value);
+  let d4=parseInput(document.getElementById('rebateDisc').value);
+
+  let discAmt1=(document.getElementById('discount').value.includes("%"))?lp*d1:d1;
+  let discAmt2=(document.getElementById('specialDisc').value.includes("%"))?lp*d2:d2;
+  let discAmt3=(document.getElementById('addDisc').value.includes("%"))?lp*d3:d3;
+  let discAmt4=(document.getElementById('rebateDisc').value.includes("%"))?lp*d4:d4;
+
+  let nlp=lp-(discAmt1+discAmt2+discAmt3+discAmt4);
+  document.getElementById('netListPrice').value=peso(nlp);
+
+  let ocPct=parseFloat(document.getElementById('otherCharges').value)/100;
+  let oc=nlp*ocPct;
+
+  // VAT auto rule
+  let vat=0;
+  if(nlp>3600000){vat=nlp*0.12;}
+  document.getElementById('vatField').value=peso(vat);
+
+  let TAP=nlp+oc+vat;
+  document.getElementById('tap').value=peso(TAP);
+
+  let dpPct=parseFloat(document.getElementById('dpPct').value)/100;
+  let dp=TAP*dpPct;
+  let resFee=parseFloat(document.getElementById('resFee').value)||0;
+  let netDp=dp-resFee;
+  document.getElementById('netDp').value=peso(netDp);
+
+  let eqMonths=parseFloat(document.getElementById('eqMonths').value)||0;
+  let eqMonthly=(eqMonths>0)?netDp/eqMonths:0;
+  document.getElementById('eqMonthly').value=peso(eqMonthly);
+
+  let remainBal=TAP-dp;
+  document.getElementById('remainBal').value=peso(remainBal);
+
+  // Summary
+  let html="<table>";
+  html+=buildRow("", "List Price", peso(lp));
+  if(discAmt1>0) html+=buildRow((document.getElementById('discount').value.includes("%"))?document.getElementById('discount').value:"", "Standard Discount", "- "+peso(discAmt1),"discount");
+  if(discAmt2>0) html+=buildRow((document.getElementById('specialDisc').value.includes("%"))?document.getElementById('specialDisc').value:"", "Special Discount", "- "+peso(discAmt2),"discount");
+  if(discAmt3>0) html+=buildRow((document.getElementById('addDisc').value.includes("%"))?document.getElementById('addDisc').value:"", "Additional Discount", "- "+peso(discAmt3),"discount");
+  if(discAmt4>0) html+=buildRow((document.getElementById('rebateDisc').value.includes("%"))?document.getElementById('rebateDisc').value:"", "Rebate Discount", "- "+peso(discAmt4),"discount");
+  html+=buildRow("", "Net List Price", peso(nlp),"hl");
+  html+=buildRow(document.getElementById('otherCharges').value+"%", "Other Charges", peso(oc));
+  if(vat>0){
+    html+=buildRow("12%", "VAT", peso(vat));
+  } else {
+    html+=buildRow("", "VAT", peso(0)+" (Non-VAT)");
+  }
+  html+=buildRow("", "Total Amount Payable", peso(TAP),"hl");
+  html+=buildRow((dpPct*100).toFixed(0)+"%", "Downpayment", peso(dp));
+  html+=buildRow("", "Less Reservation Fee", "- "+peso(resFee));
+  html+=buildRow("", "Net Downpayment", peso(netDp));
+  html+=buildRow(((1-dpPct)*100).toFixed(0)+"%", "Remaining Balance", peso(remainBal),"hl");
+  html+="</table>";
+  document.getElementById('summary').innerHTML=html;
+
+  // Bank amortization
+  let bankHTML="<table>";
+  bankHTML+=`<tr><td>Loanable Amount</td><td>${peso(remainBal)}</td></tr>`;
+  let rate=0.065;
+  [5,10,15,20].forEach(y=>{
+    let m=monthlyPayment(remainBal,rate,y);
+    bankHTML+=`<tr><td>${y} yrs</td><td>${peso(m)}</td></tr>`;
+  });
+  bankHTML+="</table>";
+  document.getElementById('bank').innerHTML=bankHTML;
+}
+</script>
+</body>
+</html>
