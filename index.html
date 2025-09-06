@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes">
+<title>Sample Quotation</title>
+<style>
+  :root{--brand:#0B5AA0;--accent:#E53935;--line:#E6EEF7;--card:#fff;--muted:#6b7280;}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;background:#f4f6f8;color:#222}
+  header{background:var(--brand);color:#fff;padding:12px;text-align:center;font-weight:700;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+  .wrap{max-width:1000px;margin:10px auto;padding:0 10px;display:grid;grid-template-columns:1fr;gap:12px}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);border:1px solid var(--line)}
+  .card h3{margin:0;padding:8px 12px;background:var(--brand);color:#fff;font-size:13px}
+  .content{padding:10px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  @media (max-width:560px){.grid{grid-template-columns:1fr}}
+  label{display:flex;flex-direction:column;font-size:12px}
+  label span{font-weight:600;margin-bottom:2px}
+  input{padding:8px;border:1px solid #d1d5db;border-radius:10px;font-size:12px;text-align:right}
+  input:focus{outline:1px solid var(--brand)}
+  input[readonly]{background:#f3f4f6;color:#555;cursor:not-allowed}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  th, td{border:1px solid #e5e7eb;padding:6px}
+  th{text-align:left;background:#eef6ff;font-weight:700}
+  td{text-align:right}
+  td:first-child{text-align:left;width:12%}
+  .discount{color:var(--accent);font-weight:600}
+  .hl{background:#eef6ff;font-weight:700;color:var(--brand)}
+  .big{font-size:14px;font-weight:700;color:var(--brand)}
+  .btn-row{display:flex;gap:10px;margin:10px 0}
+  button{flex:1;padding:10px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+  .options{display:flex;gap:16px;flex-wrap:wrap;padding:0 10px 10px}
+  .options label{flex-direction:row;align-items:center;gap:6px;font-weight:600}
+</style>
+</head>
+<body>
+<header>Sample Quotation</header>
+<div class="wrap">
+
+  <div class="card">
+    <h3>Project Details</h3>
+    <div class="content grid">
+      <label><span>Project</span><input id="projName"></label>
+      <label><span>Area (sqm)</span><input id="projArea"></label>
+      <label><span>View</span><input id="projView"></label>
+      <label><span>Unit</span><input id="projUnit"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Pricing & Discounts</h3>
+    <div class="content grid">
+      <label><span>List Price</span><input type="number" id="listPrice"></label>
+      <label><span>Standard Discount</span><input id="discStd" placeholder="e.g. 21% or 100000"></label>
+      <label><span>Special Discount</span><input id="discSpc"></label>
+      <label><span>Additional Discount</span><input id="discAdd"></label>
+      <label><span>Rebate Discount</span><input id="discReb"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Charges & VAT</h3>
+    <div class="content grid">
+      <label><span>Other Charges (%)</span><input type="number" id="otherCharges"></label>
+      <label><span>VAT (auto)</span><input type="text" id="vatAuto" readonly></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Payment Terms</h3>
+    <div class="options content">
+      <label><input type="radio" name="payOption" value="withspot" checked> With Spot Downpayment</label>
+      <label><input type="radio" name="payOption" value="spot"> Spot Cash</label>
+      <label><input type="radio" name="payOption" value="spread"> Spread Downpayment (No DP)</label>
+    </div>
+    <div class="content grid">
+      <label><span id="dpLabel">Downpayment (%)</span><input type="number" id="dpPct"></label>
+      <label><span>Reservation Fee</span><input type="number" id="resFee"></label>
+      <label id="eqField"><span>Downpayment Equity (%)</span><input type="number" id="eqPct"></label>
+      <label><span>Monthly Amortization (months)</span><input type="number" id="eqMonths"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Bank Financing Inputs</h3>
+    <div class="content grid">
+      <label><span>Interest Rate (%)</span><input type="number" id="bankRate"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Property Consultant Details</h3>
+    <div class="content grid">
+      <label><span>Name</span><input id="agentName"></label>
+      <label><span>Contact</span><input id="agentContact"></label>
+      <label><span>Company</span><input id="agentCompany"></label>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="button" onclick="compute()">Calculate</button>
+    <button type="button" onclick="window.print()">Save as PDF</button>
+  </div>
+
+  <div class="card">
+    <h3>Quotation Summary</h3>
+    <div class="content" id="summary"></div>
+  </div>
+</div>
+
+<script>
+const eqField=document.getElementById('eqField');
+function toggleFields(){
+  const opt=document.querySelector('input[name="payOption"]:checked').value;
+  if(opt==='spread'){eqField.style.display='none';}
+  else{eqField.style.display='flex';}
+}
+document.querySelectorAll('input[name="payOption"]').forEach(el=>el.addEventListener('change',()=>{toggleFields();compute();}));
+toggleFields();
+
+function peso(n){return "₱"+(isFinite(n)?Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00')}
+function pmt(rate,nper,pv){if(rate===0)return pv/nper;const r=rate;return pv*(r*Math.pow(1+r,nper))/(Math.pow(1+r,nper)-1)}
+function parseDiscountInput(val, base){
+  if(!val) return {amt:0,label:'',pct:''};
+  val=val.toString().trim();
+  if(val.endsWith('%')){
+    let pct=parseFloat(val.replace('%',''));
+    return {amt:base*(pct/100),label:`(${pct}%)`,pct:pct.toFixed(2)+"%"};
+  } else {
+    let amt=parseFloat(val.replace(/[, ]/g,''));
+    if(isNaN(amt)) return {amt:0,label:'',pct:''};
+    let pct=(amt/base*100);
+    return {amt:amt,label:`(${pct.toFixed(2)}%)`,pct:pct.toFixed(2)+"%"};
+  }
+}
+function buildRow(pct,label,value,cls=""){return `<tr class="${cls}"><td>${pct||""}</td><td>${label}</td><td>${value}</td></tr>`}
+function compute(){
+  const listPrice=+document.getElementById('listPrice').value||0;
+  let netPrice=listPrice;
+  const std=parseDiscountInput(document.getElementById('discStd').value,listPrice); netPrice-=std.amt;
+  const spc=parseDiscountInput(document.getElementById('discSpc').value,netPrice); netPrice-=spc.amt;
+  const add=parseDiscountInput(document.getElementById('discAdd').value,netPrice); netPrice-=add.amt;
+  const reb=parseDiscountInput(document.getElementById('discReb').value,netPrice); netPrice-=reb.amt;
+
+  const ocPct=+document.getElementById('otherCharges').value||0;
+  const oc=netPrice*(ocPct/100);
+
+  let vat=0; let vatNote=""; let vatPct="";
+  if(netPrice<=3600000){ vat=0; vatNote="(Non-VAT)"; vatPct=""; }
+  else { vat=netPrice*0.12; vatNote="(12% Applied)"; vatPct="12%"; }
+  document.getElementById('vatAuto').value=peso(vat)+" "+vatNote;
+
+  const TAP=netPrice+oc+vat;
+
+  let dpPct=(+document.getElementById('dpPct').value||0)/100;
+  let resFee=+document.getElementById('resFee').value||0;
+  let eqPct=(+document.getElementById('eqPct').value||0)/100;
+  const eqMonths=Math.max(+document.getElementById('eqMonths').value||0,1);
+  const opt=document.querySelector('input[name="payOption"]:checked').value;
+
+  let dp=0, netDp=0, eqAmount=0, monthlyEq=0, balance=0, remainingPct=0;
+  if(opt==='withspot'){
+    dp=TAP*dpPct; netDp=dp-resFee;
+    eqAmount=TAP*eqPct; monthlyEq=eqAmount/eqMonths;
+    remainingPct=100-(dpPct*100+eqPct*100); balance=TAP*(remainingPct/100);
+  } else if(opt==='spot'){
+    dp=TAP*dpPct; netDp=dp-resFee;
+    remainingPct=100-dpPct*100; balance=TAP*(remainingPct/100);
+  } else if(opt==='spread'){
+    dp=TAP*dpPct; netDp=dp-resFee;
+    eqAmount=netDp; monthlyEq=netDp/eqMonths;
+    remainingPct=100-dpPct*100; balance=TAP-netDp;
+  }
+
+  const bankRate=(+document.getElementById('bankRate').value||0)/100;
+  const r=bankRate/12;
+  const m5=pmt(r,60,balance),m10=pmt(r,120,balance),m15=pmt(r,180,balance),m20=pmt(r,240,balance);
+
+  let html=`<h4>Pricing & Discounts</h4><table>`;
+  html+=buildRow("", "List Price", peso(listPrice));
+  if(std.amt) html+=buildRow(std.pct, "Standard Discount", "- "+peso(std.amt), "discount");
+  if(spc.amt) html+=buildRow(spc.pct, "Special Discount", "- "+peso(spc.amt), "discount");
+  if(add.amt) html+=buildRow(add.pct, "Additional Discount", "- "+peso(add.amt), "discount");
+  if(reb.amt) html+=buildRow(reb.pct, "Rebate Discount", "- "+peso(reb.amt), "discount");
+  html+=buildRow("", "Net List Price", peso(netPrice), "hl")+"</table>";
+
+  html+=`<h4>Payment Term Details</h4><table>`;
+  if(ocPct>0) html+=buildRow(ocPct+"%", "Other Charges", peso(oc));
+  html+=buildRow(vatPct, "VAT", peso(vat)+" "+vatNote);
+  html+=buildRow("", "Total Amount Payable", peso(TAP), "hl");
+  if(opt==='withspot'){
+    html+=buildRow((dpPct*100).toFixed(2)+"%", "Downpayment", peso(dp));
+    html+=buildRow("", "Less Reservation Fee", "- "+peso(resFee));
+    html+=buildRow("", "Net Downpayment", peso(netDp));
+    if(eqPct>0){html+=buildRow((eqPct*100).toFixed(2)+"%", "Downpayment Equity", peso(eqAmount));}
+    if(eqAmount>0){html+=buildRow("", `Monthly Amortization (${eqMonths} months)`, peso(monthlyEq)+"/mo");}
+  } else if(opt==='spot'){
+    html+=buildRow((dpPct*100).toFixed(2)+"%", "Downpayment", peso(dp));
+    html+=buildRow("", "Less Reservation Fee", "- "+peso(resFee));
+    html+=buildRow("", "Net Downpayment", peso(netDp));
+  } else if(opt==='spread'){
+    html+=buildRow((dpPct*100).toFixed(2)+"%", "Downpayment (Equity)", peso(dp));
+    html+=buildRow("", "Less Reservation Fee", "- "+peso(resFee));
+    html+=buildRow("", "Net Downpayment (Equity)", peso(netDp));
+    html+=buildRow("", `Monthly Amortization (${eqMonths} months)`, peso(monthlyEq)+"/mo");
+  }
+  html+=buildRow(remainingPct.toFixed(2)+"%", "Remaining Balance", peso(balance), "hl")+"</table>";
+
+  html+=`<h4>Estimated Monthly Amortization (At the Bank)</h4><table>`;
+  html+=`<tr><td>Loanable Amount</td><td>${peso(balance)}</td></tr>`;
+  html+=`<tr><td>Interest Rate</td><td>${(bankRate*100).toFixed(2)}%</td></tr>`;
+  html+=`<tr><td>5 yrs</td><td>${peso(m5)}</td></tr>`;
+  html+=`<tr><td>10 yrs</td><td>${peso(m10)}</td></tr>`;
+  html+=`<tr><td>15 yrs</td><td>${peso(m15)}</td></tr>`;
+  html+=`<tr><td>20 yrs</td><td>${peso(m20)}</td></tr>`;
+  html+="</table>";
+
+  document.getElementById('summary').innerHTML=html;
+}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',compute));
+compute();
+</script>
+</body>
+</html>
