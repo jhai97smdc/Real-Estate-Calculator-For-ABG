@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Property Quotation — Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef4fb;
+    --card: rgba(255,255,255,0.66);
+    --card-border: rgba(255,255,255,0.9);
+    --text:#10233a;
+    --muted:#6c7a89;
+    --primary:#0f4ea6; /* deep blue */
+    --primary-2:#113f7a;
+    --chip:#1a66d1;
+    --shadow: 0 10px 26px rgba(17,34,68,.10), 0 2px 6px rgba(17,34,68,.06);
+    --radius:18px;
+    --field-radius:12px;
+    --gap:16px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:
+      radial-gradient(1200px 600px at 70% -100px, #cfe4ff55, transparent 60%),
+      radial-gradient(1000px 600px at -10% -200px, #e8f2ff66, transparent 60%),
+      var(--bg);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{
+    max-width:900px; margin:28px auto 120px; padding:0 18px;
+  }
+  h1{
+    text-align:left; font-weight:800; font-size:28px; letter-spacing:.2px;
+    margin:0 0 18px 6px; color:var(--primary-2);
+    text-shadow:0 1px 0 #fff8;
+  }
+  .card{
+    position:relative;
+    background:var(--card);
+    border:1px solid #ffffff80;
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding:18px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    margin:14px 0 20px;
+  }
+  .card .title{
+    background: linear-gradient(180deg, #2f6fd9 0%, #1d57bb 100%);
+    color:#fff; display:inline-block; padding:10px 16px;
+    border-radius:14px;
+    font-weight:800; letter-spacing:.3px; font-size:18px; box-shadow:0 6px 14px rgba(21,69,153,.25);
+    margin:0 0 14px 6px;
+  }
+
+  .grid-2{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+  @media (max-width: 420px){
+    .grid-2{ grid-template-columns: 1fr 1fr; gap:14px; } /* keep two cols on mobile but compact */
+  }
+  .field{
+    background:#fff; border:1px solid #e8eef6;
+    border-radius: var(--field-radius);
+    padding:10px 12px; box-shadow: inset 0 1px 0 #ffffffaa, 0 2px 10px rgba(17,34,68,.04);
+  }
+  .label{font-weight:700; font-size:14px; margin:0 0 6px 2px;}
+  input[type="text"], input[type="number"], input[type="date"]{
+    width:100%; border:0; outline:0; font-size:15px; padding:8px 2px; background:transparent;
+    color:var(--text);
+  }
+  input::placeholder{color:#c0c7d1}
+  .btns{ display:flex; gap:14px; flex-wrap:wrap; padding:2px 6px 4px; }
+  .chip-btn{
+    border:0; background:#1e58bf; color:#fff; font-weight:700; letter-spacing:.2px;
+    padding:12px 18px; border-radius:14px; box-shadow:0 8px 18px rgba(29,88,191,.28);
+  }
+  .chip-btn.secondary{ background:#e8eef8; color:#274066; box-shadow:none; font-weight:700 }
+  .chip-btn:active{ transform: translateY(1px) }
+  .spacer{ height:10px }
+
+  /* compute action buttons */
+  .actions{
+    display:flex; gap:14px; flex-wrap:wrap; justify-content:space-between; padding:6px 6px 0;
+  }
+  .actions .action{
+    flex:1 1 auto; min-width:140px;
+    border:0; padding:14px 16px; font-weight:800; border-radius:14px;
+    background:#1454bf; color:#fff; box-shadow:0 10px 20px rgba(26,82,185,.28);
+  }
+  .actions .ghost{ background:#ebf2ff; color:#113f7a; box-shadow:none; }
+  .actions .soft{ background:#0a66c2; }
+  .money{
+    font-weight:800; color:#0a2f66;
+  }
+  hr.sep{ border:0; border-top:1px dashed #d9e3f5; margin:10px 0 0 }
+  /* summary */
+  .summary .row{ display:flex; justify-content:space-between; gap:12px; padding:10px 6px; }
+  .summary .row strong{ font-weight:800 }
+  .summary .row + .row{ border-top:1px dashed #d9e3f5 }
+  .summary .emph{ color:#163b7c; font-weight:800; }
+  .disclaimer{ color:#8a96a6; font-style:italic; font-size:13px; margin:10px 6px 0 }
+
+  /* small numeric boxes in Bank */
+  .mini{ text-align:center; font-weight:800; font-size:18px; padding:10px 0; background:#fff; border:1px solid #e8eef6; border-radius:12px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Property Quotation</h1>
+
+    <!-- Project Details -->
+    <section class="card" id="section-project">
+      <div class="title">Project Details</div>
+      <div class="grid-2">
+        <div class="field"><div class="label">Project Name</div><input id="projectName" type="text" placeholder="e.g., South Residences"></div>
+        <div class="field"><div class="label">View</div><input id="view" type="text" placeholder="e.g., City / Mall View"></div>
+
+        <div class="field"><div class="label">Unit Type</div><input id="unitType" type="text" placeholder="e.g., 1BR / 2BR"></div>
+        <div class="field"><div class="label">Price (₱)</div><input id="basePrice" inputmode="decimal" type="number" placeholder="e.g., 6,000,000"></div>
+
+        <div class="field"><div class="label">Floor Area (sqm)</div><input id="floorArea" inputmode="decimal" type="number" placeholder="e.g., 36.53"></div>
+        <div class="field"><div class="label">Discounts (%)</div><input id="discountPct" inputmode="decimal" type="number" placeholder="e.g., 5"></div>
+      </div>
+
+      <div class="spacer"></div>
+      <div class="title" style="margin-top:8px;background:linear-gradient(180deg,#3a7ceb 0%, #1f5ccc 100%);">Payment Term Options</div>
+      <div class="btns">
+        <button id="btnSpot"  class="chip-btn">Spot DP (Cash)</button>
+        <button id="btnSplit" class="chip-btn">Split DP</button>
+        <button id="btnSpread" class="chip-btn">Spread DP</button>
+      </div>
+    </section>
+
+    <!-- Pricing & Discounts -->
+    <section class="card" id="section-pricing">
+      <div class="title">Pricing &amp; Discounts</div>
+      <div class="grid-2">
+        <div class="field"><div class="label">List Price (₱)</div><input id="listPrice" type="number" placeholder="Enter list price"></div>
+        <div class="field"><div class="label">Net List Price (₱)</div><input id="netListPrice" type="number" placeholder="Auto / override"></div>
+
+        <div class="field"><div class="label">Discount Amount (₱)</div><input id="discountAmt" type="number" placeholder="Auto / override"></div>
+        <div class="field"><div class="label">Other Charges (%)</div><input id="otherChargesPct" type="number" placeholder="e.g., 3"></div>
+
+        <div class="field"><div class="label">VAT (%)</div><input id="vatPct" type="number" placeholder="e.g., 12"></div>
+        <div class="field"><div class="label">Reservation Fee (₱)</div><input id="resFee" type="number" placeholder="e.g., 25,000"></div>
+      </div>
+    </section>
+
+    <!-- Payment Term Details (dynamic fields below header) -->
+    <section class="card" id="section-term">
+      <div class="title">Payment Term Details</div>
+      <div id="termFields" class="grid-2">
+        <!-- Populated by JS depending on term -->
+      </div>
+    </section>
+
+    <!-- Action Buttons BEFORE Summary -->
+    <section class="card" id="section-actions" style="padding:14px 14px 16px">
+      <div class="actions">
+        <button class="action" id="btnCompute">Compute</button>
+        <button class="action ghost" id="btnReset">Reset</button>
+        <button class="action soft" id="btnPdf">Save as PDF</button>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="card" id="section-summary">
+      <div class="title">Quotation Summary</div>
+      <div class="summary" id="summary">
+        <div class="row"><span>Total Amount Payable (TAP)</span><span class="money" id="tap">₱0.00</span></div>
+        <div class="row"><span>Downpayment (Spot / Equity)</span><span class="money" id="dp">₱0.00</span></div>
+        <div class="row"><span>Reservation Fee</span><span class="money" id="rf">₱0.00</span></div>
+        <div class="row"><span>Net Downpayment</span><span class="money" id="netdp">₱0.00</span></div>
+        <div class="row"><span>Monthly Amortization (Equity)</span><span class="money" id="equityMonthly">₱0.00</span></div>
+        <div class="row"><span>Remaining Balance</span><span class="money" id="remBal">₱0.00</span></div>
+      </div>
+    </section>
+
+    <!-- Bank Financing -->
+    <section class="card" id="section-bank">
+      <div class="title">Bank Financing</div>
+      <div class="grid-2" style="margin-bottom:10px">
+        <div class="field"><div class="label">Loanable Amount (₱)</div><input id="loanable" type="number" placeholder="Auto from Remaining Balance / override"></div>
+        <div class="field"><div class="label">Interest Rate (annual %)</div><input id="bankRate" type="number" placeholder="e.g., 6.5"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><div class="label">5 yrs Monthly</div><div class="mini" id="m5">0.00</div></div>
+        <div class="field"><div class="label">10 yrs Monthly</div><div class="mini" id="m10">0.00</div></div>
+        <div class="field"><div class="label">15 yrs Monthly</div><div class="mini" id="m15">0.00</div></div>
+        <div class="field"><div class="label">20 yrs Monthly</div><div class="mini" id="m20">0.00</div></div>
+      </div>
+      <div class="disclaimer">This computation is for presentation purposes only and may change without prior notice.</div>
+    </section>
+
+    <!-- Consultant -->
+    <section class="card" id="section-consultant">
+      <div class="title">Property Consultant</div>
+      <div class="grid-2">
+        <div class="field"><div class="label">Name</div><input id="agentName" type="text" placeholder="e.g., John Doe"></div>
+        <div class="field"><div class="label">Mobile No.</div><input id="agentPhone" type="text" placeholder="e.g., 0917 123 4567"></div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+// ---------- Utilities ----------
+const peso = (v)=> {
+  if (isNaN(v) || v===null) v = 0;
+  return '₱' + Number(v).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+};
+const num = (id)=> parseFloat(document.getElementById(id)?.value || '0') || 0;
+const setVal = (id, v)=> document.getElementById(id).textContent = peso(v);
+const formatInput = (n)=> isFinite(n) ? +n : 0;
+
+// ---------- Payment Term dynamic fields ----------
+let currentTerm = 'SPREAD'; // default
+const termFields = document.getElementById('termFields');
+
+function renderTermFields(kind){
+  currentTerm = kind;
+  termFields.innerHTML = '';
+  const add = (label, id, ph='')=>{
+    const wrap = document.createElement('div');
+    wrap.className='field';
+    wrap.innerHTML = '<div class="label">'+label+'</div><input id="'+id+'" type="number" placeholder="'+ph+'">';
+    termFields.appendChild(wrap);
+  };
+
+  if(kind==='SPOT'){
+    add('Downpayment %','dpPct','e.g., 10');
+  }else if(kind==='SPLIT'){
+    add('DP % (1st)','dpPct1','e.g., 5');
+    add('DP % (2nd)','dpPct2','e.g., 5');
+    add('Months gap','gapMonths','e.g., 1');
+  }else{ // SPREAD
+    add('Downpayment %','dpPctSpread','e.g., 10');
+    add('Equity Months','equityMonths','e.g., 24');
+  }
+}
+
+document.getElementById('btnSpot').addEventListener('click', ()=>renderTermFields('SPOT'));
+document.getElementById('btnSplit').addEventListener('click', ()=>renderTermFields('SPLIT'));
+document.getElementById('btnSpread').addEventListener('click', ()=>renderTermFields('SPREAD'));
+renderTermFields('SPREAD');
+
+// ---------- Core Computation ----------
+function computeAll(){
+  // Inputs
+  const listPrice = num('listPrice') || num('basePrice');
+  const discountPct = num('discountPct');
+  const otherPct = num('otherChargesPct');
+  const vatPct = num('vatPct');
+  const resFee = num('resFee');
+
+  // Derived
+  const discountAmt = listPrice * (discountPct/100);
+  const netList = listPrice - discountAmt;
+  const otherAmt = netList * (otherPct/100);
+  const vatAmt = netList * (vatPct/100);
+  const TAP = netList + otherAmt + vatAmt;
+
+  // Downpayment Flow
+  let dp = 0, equityMonthly = 0;
+
+  if(currentTerm==='SPOT'){
+    const dpPct = num('dpPct');
+    dp = TAP * (dpPct/100);
+    equityMonthly = 0;
+  }else if(currentTerm==='SPLIT'){
+    const p1 = num('dpPct1'), p2 = num('dpPct2');
+    dp = TAP * ((p1+p2)/100);
+    // still show 0 equity monthly; schedule handled externally
+    equityMonthly = 0;
+  }else{ // SPREAD
+    const dpPct = num('dpPctSpread');
+    const months = Math.max(1, Math.round(num('equityMonths')) || 1);
+    dp = TAP * (dpPct/100);
+    equityMonthly = (dp - resFee)/months;
+  }
+
+  const netDown = Math.max(0, dp - resFee);
+  const remaining = Math.max(0, TAP - dp);
+
+  // Write back to fields if blank
+  if(!document.getElementById('discountAmt').value) document.getElementById('discountAmt').value = (discountAmt||0).toFixed(2);
+  if(!document.getElementById('netListPrice').value) document.getElementById('netListPrice').value = (netList||0).toFixed(2);
+
+  // Summary
+  setVal('tap', TAP);
+  setVal('dp', dp);
+  setVal('rf', resFee);
+  setVal('netdp', netDown);
+  setVal('equityMonthly', equityMonthly);
+  setVal('remBal', remaining);
+
+  // Bank monthly amortization (from remaining unless manual)
+  const loanableInput = document.getElementById('loanable');
+  const loanable = loanableInput.value ? num('loanable') : remaining;
+  if(!loanableInput.value) loanableInput.value = (loanable||0).toFixed(2);
+
+  const rate = (num('bankRate')||0)/100/12;
+  function pmt(P, r, n){
+    if(n<=0) return 0;
+    if(r===0) return P/n;
+    return P * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+  }
+  document.getElementById('m5').textContent  = peso(pmt(loanable, rate, 5*12));
+  document.getElementById('m10').textContent = peso(pmt(loanable, rate,10*12));
+  document.getElementById('m15').textContent = peso(pmt(loanable, rate,15*12));
+  document.getElementById('m20').textContent = peso(pmt(loanable, rate,20*12));
+}
+
+document.getElementById('btnCompute').addEventListener('click', computeAll);
+document.getElementById('bankRate').addEventListener('input', computeAll);
+document.getElementById('loanable').addEventListener('input', computeAll);
+
+// Reset
+document.getElementById('btnReset').addEventListener('click', ()=>location.reload());
+
+// "Save as PDF" (simple print)
+document.getElementById('btnPdf').addEventListener('click', ()=>{
+  window.print();
+});
+</script>
+</body>
+</html>
