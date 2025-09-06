@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Real Estate Quotation Calculator</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --brand:#2b67f6;
+    --brand-2:#1f7ae0;
+    --ink:#0c1222;
+    --muted:#6b7280;
+    --line:#e6ebf2;
+    --good:#e9f6ee;
+    --accent:#eef3ff;
+    --glass: rgba(255,255,255,.72);
+    --shadow: 0 10px 30px rgba(19,35,91,.08), 0 1px 0 rgba(19,35,91,.06);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color:var(--ink);
+    background: linear-gradient(180deg,#eaf1ff 0%, #f8fbff 200px, var(--bg) 200px);
+  }
+  .wrap{
+    max-width:980px;
+    margin:24px auto 80px;
+    padding:0 18px;
+  }
+  h1{
+    font-weight:800;
+    letter-spacing:.2px;
+    color:#1446ff;
+    margin:8px 0 18px;
+    font-size:clamp(22px,4.8vw,34px);
+  }
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  @media (min-width:800px){
+    .grid-2{grid-template-columns:1fr 1fr}
+  }
+  .card{
+    background:linear-gradient(180deg, var(--glass), var(--card));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border:1px solid rgba(84,112,216,.14);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+  }
+  .section-title{
+    display:flex; align-items:center; gap:10px;
+    font-weight:800; color:#1446ff; margin:4px 0 16px;
+    font-size:18px;
+  }
+  .section-title .pill{
+    display:inline-block;width:6px;height:20px;border-radius:8px;
+    background:#1446ff;
+  }
+  label{
+    display:block; font-size:14px; color:#1f2937; margin:10px 0 6px;
+  }
+  .row{display:flex; gap:12px}
+  .row > .field{flex:1}
+  input[type="text"], input[type="number"]{
+    width:100%;
+    border:1px solid var(--line);
+    background:#f6f9ff;
+    color:#111827;
+    outline:none;
+    padding:12px 12px;
+    border-radius:12px;
+    font-size:15px;
+  }
+  input::placeholder{color:#a8b3c8}
+  .hint{font-size:12px;color:#6b7280;margin-top:2px}
+  .radio-row{
+    display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 4px;
+  }
+  .radio{
+    display:flex; align-items:center; gap:10px; padding:10px 14px;
+    background: #f3f6ff; border:1px solid #dbe5ff; border-radius:999px;
+    cursor:pointer; user-select:none;
+  }
+  .radio input{accent-color:#1446ff; transform:scale(1.2)}
+  .btns{display:flex; gap:10px; flex-wrap:wrap; margin:6px 0 0}
+  .btn{
+    background:#1446ff; color:#fff; border:0; padding:12px 16px; border-radius:12px;
+    font-weight:700; cursor:pointer; box-shadow:0 8px 14px rgba(33,86,255,.18);
+  }
+  .btn.secondary{background:#eef3ff;color:#1446ff;border:1px solid #cfe0ff;box-shadow:none}
+  .btn.ghost{background:#fff;color:#1446ff;border:1px solid #cfe0ff}
+  /* TABLE (3 columns) */
+  table{width:100%; border-collapse:separate; border-spacing:0 10px}
+  th, td{padding:12px 12px; text-align:left; font-size:14px}
+  thead th{
+    color:#133466; font-weight:800; background:#eef3ff; border-top-left-radius:10px;border-top-right-radius:10px
+  }
+  tbody tr{
+    background:#fff; border:1px solid #e7ecf6; border-radius:12px;
+    box-shadow:0 1px 0 rgba(5,22,60,.03);
+  }
+  tbody td:first-child{width:84px; color:#1446ff; font-weight:700}
+  tbody td:last-child{font-variant-numeric: tabular-nums; text-align:right}
+  .hl{background:#eef3ff!important; color:#1446ff; font-weight:800}
+  .hl td{border-top:1px solid #dbe5ff}
+  .accent-row{background:#f2f7ff}
+  .bank-card{border:2px solid #d7e7ff}
+  .right-note{font-size:13px;color:#6b7280;background:#f7fafc;border:1px dashed #d5e4ff;border-radius:10px;padding:10px 12px}
+  .footer-note{font-size:12px;color:#6b7280;margin:12px 2px}
+  .hidden{display:none}
+  .three{display:grid; grid-template-columns:70px 1fr 1fr; gap:8px}
+  .mono{font-variant-numeric: tabular-nums}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Real Estate Quotation Calculator</h1>
+
+    <!-- PROJECT DETAILS -->
+    <div class="card">
+      <div class="section-title"><span class="pill"></span>Project Details</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Project Name</label>
+          <input id="projectName" type="text" placeholder="e.g. South Residences">
+        </div>
+        <div class="field">
+          <label>Unit Area (sqm)</label>
+          <input id="unitArea" type="text" placeholder="e.g. 36.53">
+        </div>
+        <div class="field">
+          <label>View</label>
+          <input id="view" type="text" placeholder="e.g. Mall View">
+        </div>
+        <div class="field">
+          <label>Bldg & Unit No.</label>
+          <input id="unitNo" type="text" placeholder="e.g. T3-1105">
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING & DISCOUNTS -->
+    <div class="card">
+      <div class="section-title"><span class="pill"></span>Pricing & Discounts</div>
+      <div class="field">
+        <label>List Price (₱)</label>
+        <input id="listPrice" type="number" min="0" step="0.01" placeholder="e.g. 3674000">
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Standard Discount <span class="hint">(enter % or amount)</span></label>
+          <div class="row">
+            <div class="field"><input id="stdDiscPct" type="number" step="0.0001" placeholder="e.g. 21"></div>
+            <div class="field"><input id="stdDiscAmt" type="number" step="0.01" placeholder="e.g. 100000"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Special Discount</label>
+          <div class="row">
+            <div class="field"><input id="spDiscPct" type="number" step="0.0001" placeholder="e.g. 5"></div>
+            <div class="field"><input id="spDiscAmt" type="number" step="0.01" placeholder="e.g. 50000"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Additional Discount</label>
+          <div class="row">
+            <div class="field"><input id="addDiscPct" type="number" step="0.0001" placeholder="e.g. 1"></div>
+            <div class="field"><input id="addDiscAmt" type="number" step="0.01" placeholder="e.g. 20000"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Rebate Discount</label>
+          <div class="row">
+            <div class="field"><input id="rebDiscPct" type="number" step="0.0001" placeholder="e.g. 1.5"></div>
+            <div class="field"><input id="rebDiscAmt" type="number" step="0.01" placeholder="e.g. 30000"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leave space then Other Charges + VAT + TAP -->
+      <div style="height:6px"></div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Other Charges (%)</label>
+          <input id="otherChargesPct" type="number" step="0.0001" placeholder="e.g. 8.5">
+        </div>
+        <div class="field">
+          <label>VAT (auto)</label>
+          <input id="vatShown" type="text" disabled placeholder="Auto-computed by rule">
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT TERMS -->
+    <div class="card">
+      <div class="section-title"><span class="pill"></span>Payment Terms</div>
+      <div class="radio-row">
+        <label class="radio"><input type="radio" name="pt" value="spot" checked>Spot DP (Cash)</label>
+        <label class="radio"><input type="radio" name="pt" value="split">Split (Spot DP + Monthly)</label>
+        <label class="radio"><input type="radio" name="pt" value="spread">Spread DP (Preselling)</label>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Downpayment % (Spot or Equity)</label>
+          <input id="dpPct" type="number" step="0.0001" placeholder="e.g. 5">
+        </div>
+        <div class="field">
+          <label>Additional Equity % <span class="hint">(for Split; blank if none)</span></label>
+          <input id="equityPct" type="number" step="0.0001" placeholder="e.g. 5">
+        </div>
+        <div class="field">
+          <label>Reservation Fee (₱)</label>
+          <input id="reservation" type="number" step="0.01" placeholder="e.g. 30000">
+        </div>
+        <div class="field">
+          <label>Months for Equity</label>
+          <input id="months" type="number" step="1" placeholder="e.g. 12">
+        </div>
+        <div class="field">
+          <label>Interest Rate (annual, %)</label>
+          <input id="bankRate" type="number" step="0.0001" placeholder="e.g. 5.5">
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn" id="btnCompute">Compute</button>
+        <button class="btn secondary" id="btnReset" type="button">Reset</button>
+        <button class="btn ghost" id="btnPDF" type="button">Save as PDF</button>
+      </div>
+    </div>
+
+    <!-- QUOTATION SUMMARY -->
+    <div class="card" id="summaryCard">
+      <div class="section-title"><span class="pill"></span>Quotation Summary</div>
+      <table id="summaryTbl">
+        <thead>
+          <tr><th>%</th><th>Description</th><th>Amount (₱)</th></tr>
+        </thead>
+        <tbody id="sumBody">
+          <!-- rows injected -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BANK FINANCING -->
+    <div class="card bank-card" id="bankCard">
+      <div class="section-title"><span class="pill"></span>Bank Financing</div>
+      <table>
+        <thead><tr><th>Description</th><th>Amount (₱)</th></tr></thead>
+        <tbody id="bankBody">
+        </tbody>
+      </table>
+      <div class="right-note" id="rateNote"></div>
+    </div>
+
+    <!-- PROPERTY CONSULTANT -->
+    <div class="card">
+      <div class="section-title"><span class="pill"></span>Property Consultant</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Name</label>
+          <input id="pcName" type="text" placeholder="Juan Dela Cruz">
+        </div>
+        <div class="field">
+          <label>Mobile No.</label>
+          <input id="pcMobile" type="text" placeholder="0917-xxx-xxxx">
+        </div>
+        <div class="field">
+          <label>Position</label>
+          <input id="pcRole" type="text" placeholder="Property Consultant">
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note" id="genNote"></div>
+    <div class="footer-note">*Please Note: All information, including prices, availability, and payment options, is subject to change without notice.</div>
+  </div>
+
+<script>
+  const peso = n => isNaN(n) ? "₱0.00" : "₱" + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const getNum = (id) => {
+    const el = document.getElementById(id);
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  };
+  const pref = (pct, amt, base) => {
+    if (amt && amt>0) return amt;
+    if (pct && pct!==0) return base * pct/100;
+    return 0;
+  };
+
+  function computeAll(){
+    // Inputs
+    const LP = getNum('listPrice');
+    const std = pref(getNum('stdDiscPct'), getNum('stdDiscAmt'), LP);
+    const sp  = pref(getNum('spDiscPct'), getNum('spDiscAmt'), LP);
+    const add = pref(getNum('addDiscPct'), getNum('addDiscAmt'), LP);
+    const reb = pref(getNum('rebDiscPct'), getNum('rebDiscAmt'), LP);
+    const discounts = {std, sp, add, reb};
+
+    const NLP = Math.max(LP - (std+sp+add+reb), 0);
+    const otherPct = getNum('otherChargesPct');
+    const otherAmt = NLP * (otherPct/100);
+    // VAT rule: <= 3,600,000 VAT-exempt
+    const VAT = NLP > 3600000 ? NLP * 0.12 : 0;
+    document.getElementById('vatShown').value = VAT === 0 ? "Exempt (₱0.00)" : peso(VAT);
+
+    const TAP = NLP + otherAmt + VAT;
+
+    // Payment term
+    const pt = (document.querySelector('input[name="pt"]:checked')||{}).value || 'spot';
+    const dpPct = getNum('dpPct');
+    const equityPct = getNum('equityPct');
+    const rf = getNum('reservation');
+    const mos = Math.max(getNum('months'),1);
+
+    let dpSpot = 0, dpEquity=0, netDP=0, monthly=0, remaining=TAP;
+
+    if (pt==='spot'){
+      dpSpot = TAP * (dpPct/100);
+      netDP  = Math.max(dpSpot - rf, 0);
+      remaining = TAP - dpSpot;
+      dpEquity = 0; monthly=0;
+    }else if (pt==='split'){
+      dpSpot   = TAP * (dpPct/100);
+      dpEquity = TAP * (equityPct/100);
+      netDP    = Math.max(dpSpot - rf, 0);
+      monthly  = mos? (dpEquity / mos) : 0;
+      remaining = TAP - (dpSpot + dpEquity);
+    }else{ // spread
+      dpEquity = TAP * (dpPct/100); // using dpPct as equity for spread
+      netDP    = Math.max(dpEquity - rf, 0);
+      monthly  = mos? (dpEquity / mos) : 0;
+      remaining = TAP - dpEquity;
+      dpSpot = 0;
+    }
+    if (remaining < 0) remaining = 0;
+
+    // Summary rows
+    const rows = [];
+    // Discounts (hide if 0)
+    if (LP>0) rows.push({p:'', d:'List Price', a:LP});
+    if (discounts.std) rows.push({p:(getNum('stdDiscPct')||'') , d:'Standard Discount', a:-discounts.std});
+    if (discounts.sp)  rows.push({p:(getNum('spDiscPct')||'')  , d:'Special Discount', a:-discounts.sp});
+    if (discounts.add) rows.push({p:(getNum('addDiscPct')||'') , d:'Additional Discount', a:-discounts.add});
+    if (discounts.reb) rows.push({p:(getNum('rebDiscPct')||'') , d:'Rebate Discount', a:-discounts.reb});
+
+    rows.push({p:'', d:'Net List Price', a:NLP, cls:'accent-row'});
+    rows.push({p:(otherPct||''), d:'Other Charges', a:otherAmt});
+    rows.push({p:(VAT? '12' : ''), d: (VAT? 'VAT' : 'VAT (Exempt)'), a:VAT});
+
+    rows.push({p:'', d:'Total Amount Payable (TAP)', a:TAP, cls:'hl'});
+
+    // Payment term detail rows (disappear if not applicable)
+    if (pt==='spot' || pt==='split'){
+      if (dpPct) rows.push({p:dpPct, d:'Downpayment', a:dpSpot});
+      if (rf) rows.push({p:'', d:'Reservation Fee', a:rf});
+      if (dpPct || rf) rows.push({p:'', d:'Net Downpayment', a:netDP});
+    }
+    if (pt==='split' || pt==='spread'){
+      if (pt==='split' && equityPct) rows.push({p:equityPct, d:'Downpayment (equity)', a:dpEquity});
+      if (pt==='spread' && dpPct) rows.push({p:dpPct, d:'Downpayment (equity)', a:dpEquity});
+      if (mos) rows.push({p:mos, d:'No. of months', a:''});
+      if (monthly) rows.push({p:'', d:'Monthly amortization', a:monthly});
+      if (rf && pt==='spread') rows.push({p:'', d:'Reservation Fee', a:rf});
+      if (pt==='spread' && (dpEquity || rf)) rows.push({p:'', d:'Net Downpayment (equity)', a:Math.max(dpEquity - rf,0)});
+      if (pt==='split' && rf){ /* Net DP for split already shown above */ }
+    }
+
+    rows.push({p:'', d:'Remaining Balance', a:remaining, cls:'hl'});
+
+    // Render summary
+    const body = document.getElementById('sumBody');
+    body.innerHTML = '';
+    rows.forEach(r=>{
+      const tr = document.createElement('tr');
+      if (r.cls) tr.classList.add(r.cls);
+      const p = document.createElement('td'); p.textContent = (r.p!=='' && r.p!=null) ? (r.p + (isNaN(r.p)?'':'%')) : '';
+      const d = document.createElement('td'); d.textContent = r.d;
+      const a = document.createElement('td'); a.className='mono'; a.textContent = (r.a==='' ? '' : peso(r.a));
+      tr.appendChild(p); tr.appendChild(d); tr.appendChild(a);
+      body.appendChild(tr);
+    });
+
+    // Bank section
+    const rate = getNum('bankRate');
+    const m = (rate/100)/12;
+    const makePMT = (principal, years)=>{
+      const n = years*12;
+      if (m===0) return principal/n;
+      const pmt = principal * (m*Math.pow(1+m,n))/(Math.pow(1+m,n)-1);
+      return pmt;
+    };
+    const bankRows=[
+      {d:'Loanable Amount (Bank)', a:remaining},
+      {d:'5 years (est. monthly)', a: makePMT(remaining,5)},
+      {d:'10 years (est. monthly)', a: makePMT(remaining,10)},
+      {d:'15 years (est. monthly)', a: makePMT(remaining,15)},
+      {d:'20 years (est. monthly)', a: makePMT(remaining,20)},
+    ];
+    const bdy=document.getElementById('bankBody'); bdy.innerHTML='';
+    bankRows.forEach((r,i)=>{
+      const tr=document.createElement('tr');
+      if (i===0) tr.classList.add('accent-row');
+      const t1=document.createElement('td'); t1.textContent=r.d;
+      const t2=document.createElement('td'); t2.className='mono'; t2.style.textAlign='right'; t2.textContent=peso(r.a);
+      tr.appendChild(t1); tr.appendChild(t2); bdy.appendChild(tr);
+    });
+    document.getElementById('rateNote').textContent =
+      `Based on ${rate || 0}% annual interest rate. This is an estimate only. Actual rates apply upon loan application.`;
+
+    // Generated note
+    const dt = new Date();
+    document.getElementById('genNote').textContent =
+      `Generated on ${dt.toLocaleString('en-PH', {year:'numeric', month:'long', day:'2-digit', hour:'2-digit', minute:'2-digit'})}`;
+  }
+
+  document.getElementById('btnCompute').addEventListener('click', computeAll);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ document.querySelectorAll('input').forEach(el=>{
+      if(el.id==='vatShown') { el.value=''; return;}
+      if (el.type==='radio'){ if(el.value==='spot') el.checked=true; }
+      else el.value='';
+    });
+    document.getElementById('sumBody').innerHTML='';
+    document.getElementById('bankBody').innerHTML='';
+    document.getElementById('rateNote').textContent='';
+    document.getElementById('genNote').textContent='';
+  });
+
+  // Save as PDF (browser print)
+  document.getElementById('btnPDF').addEventListener('click', ()=>{
+    computeAll(); window.print();
+  });
+
+  // Recompute VAT preview on input changes
+  ['listPrice','stdDiscPct','stdDiscAmt','spDiscPct','spDiscAmt','addDiscPct','addDiscAmt','rebDiscPct','rebDiscAmt','otherChargesPct']
+    .forEach(id=> document.getElementById(id).addEventListener('input', ()=>{
+      // lightweight VAT preview & keep field visible
+      const LP = getNum('listPrice');
+      const std = pref(getNum('stdDiscPct'), getNum('stdDiscAmt'), LP);
+      const sp  = pref(getNum('spDiscPct'), getNum('spDiscAmt'), LP);
+      const add = pref(getNum('addDiscPct'), getNum('addDiscAmt'), LP);
+      const reb = pref(getNum('rebDiscPct'), getNum('rebDiscAmt'), LP);
+      const NLP = Math.max(LP - (std+sp+add+reb), 0);
+      const VAT = NLP > 3600000 ? NLP * 0.12 : 0;
+      document.getElementById('vatShown').value = VAT === 0 ? "Exempt (₱0.00)" : peso(VAT);
+    }));
+</script>
+</body>
+</html>
