@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Property Quotation — Final</title>
+<style>
+  :root{
+    --blue:#1a73e8;
+    --blue-strong:#0F5FD7;
+    --text:#0f172a;
+    --muted:#5b6b86;
+    --card-bg: rgba(255,255,255,0.68);
+    --frost-blur: 14px;
+    --ring: rgba(26,115,232,.18);
+    --shadow: 0 8px 30px rgba(16,24,40,.08);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:#fff;
+    background-image:
+      radial-gradient(1400px 400px at -10% -20%, rgba(26,115,232,.08), transparent 60%),
+      radial-gradient(900px 300px at 120% 10%, rgba(26,115,232,.06), transparent 55%);
+  }
+  .container{
+    max-width:980px;
+    margin:24px auto 96px;
+    padding:0 14px;
+  }
+  .brand{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:10px;
+  }
+  .brand h1{
+    font-size:18px;
+    letter-spacing:.4px;
+    font-weight:700;
+    margin:0;
+    color:#0f172a;
+  }
+  .date-stamp{font-size:12px;color:var(--muted)}
+
+  /* Cards */
+  .card{
+    background:var(--card-bg);
+    backdrop-filter: blur(var(--frost-blur));
+    border:1px solid rgba(15,23,42,.06);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    margin:10px 0 14px;
+    overflow:hidden;
+  }
+  .card .head{
+    background:linear-gradient(135deg, rgba(26,115,232,.92), rgba(26,115,232,.78));
+    color:#fff; padding:9px 12px;
+    font-size:.78rem; letter-spacing:.08em; font-weight:700;
+  }
+  .card .content{ padding:12px }
+  .grid-2{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px 12px;
+  }
+  @media (max-width:640px){
+    .grid-2{ grid-template-columns: 1fr 1fr; }
+  }
+  label{
+    font-size:.76rem; color:var(--muted); display:block; margin-bottom:6px;
+    letter-spacing:.2px;
+  }
+  input[type="text"], input[type="number"]{
+    width:100%; padding:10px 10px;
+    border:1px solid rgba(15,23,42,.12); border-radius:10px;
+    background:rgba(255,255,255,.86);
+    outline:none; font-size:.9rem;
+  }
+  input[type="text"]:focus, input[type="number"]:focus{
+    border-color:var(--blue); box-shadow:0 0 0 3px var(--ring);
+  }
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .row-tight{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .row-single{display:grid; grid-template-columns:1fr; gap:10px}
+
+  /* Payment term buttons */
+  .seg{
+    display:flex; gap:8px; flex-wrap:wrap;
+  }
+  .seg button{
+    flex:1 1 auto;
+    padding:10px 12px; border-radius:999px; border:1px solid rgba(15,23,42,.14);
+    background:#fff; cursor:pointer; font-weight:600; font-size:.9rem;
+  }
+  .seg button.active{
+    background:rgba(26,115,232,.12);
+    color:var(--blue-strong);
+    border-color:rgba(26,115,232,.35);
+  }
+
+  /* Action buttons */
+  .actions{
+    display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-top:6px;
+  }
+  .btn{
+    appearance:none; border:none; border-radius:10px; padding:10px 14px; font-weight:700; cursor:pointer;
+  }
+  .btn-blue{ background:var(--blue); color:#fff; }
+  .btn-ghost{ background:transparent; color:var(--blue-strong); border:1px solid rgba(26,115,232,.35) }
+  .btn:active{ transform:translateY(1px) }
+
+  /* Summary (compact) */
+  .summary .content{ padding:10px }
+  .kv{ display:grid; grid-template-columns: 1.3fr 1fr; gap:6px 10px; align-items:center; }
+  .kv .k{ font-size:.78rem; color:#334155 }
+  .kv .v{ justify-self:end; font-weight:700; font-size:.88rem }
+  .kv .k.em{ color:var(--blue-strong); font-weight:800 }
+  .kv .v.em{ color:var(--blue-strong) }
+  .divider{ height:10px }
+  .muted{ font-size:.75rem; color:#64748b }
+  .note{ font-style:italic; font-size:.75rem; color:#64748b; margin-top:8px }
+
+  /* Visibility control */
+  #summaryView{ display:none }
+  .hidden{ display:none !important }
+
+  /* Small typography tweak for full-summary fit */
+  .summary .head{ font-size:.72rem; padding:8px 10px }
+  .summary .kv .k{ font-size:.72rem }
+  .summary .kv .v{ font-size:.82rem }
+
+  
+  
+/* Columns inside summary */
+  .summary-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  /* Make cards a touch thinner */
+  .card.compact .content{ padding:10px }
+
+/* --- Quotation Summary Alignment Fix --- */
+.kv-row { display: contents;  font-size:1.05rem;}
+#sumKV .k, #sumKV .v {
+  font-size: .82rem;
+  line-height: 1.25;
+}
+#sumKV .em { font-weight: 800; }
+#sumKV .v { justify-self: end; }
+
+
+/* Ensure divider spans both columns so it doesn't shift next items */
+#sumKV .divider, .kv .divider { grid-column: 1 / -1; height: 10px; }
+
+/* --- Final Fix: Consistent alignment for Quotation Summary --- */
+#sumKV .k, #sumKV .v {
+  font-size: .82rem;
+  line-height: 1.25;
+}
+#sumKV .em { font-weight: 800; }
+#sumKV .v { justify-self: end; }
+/* Divider spans both columns */
+#sumKV .divider { grid-column: 1 / -1; height: 10px; }
+
+
+/* --- Results Section Polish & Transition --- */
+#summaryView {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+#summaryView.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+#summaryView .card {
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+#summaryView .head {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+
+/* --- Screenshot Mode --- */
+.screenshot-mode .btn,
+.screenshot-mode .actions {
+  display: none !important;
+}
+.screenshot-mode {
+  background: #fff;
+  padding: 10px;
+}
+
+
+/* --- Compact & Highlighted Results --- */
+#summaryView .card {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+}
+#summaryView .head {
+  font-size: 0.95rem;
+  padding: 6px 8px;
+}
+#summaryView .kv-row .k,
+#summaryView .kv-row .v {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+/* Important rows bold + slightly larger */
+#summaryView .kv-row.discount .k,
+#summaryView .kv-row.discount .v,
+#summaryView .kv-row.total .k,
+#summaryView .kv-row.total .v,
+#summaryView .kv-row.downpayment .k,
+#summaryView .kv-row.downpayment .v,
+#summaryView .kv-row.netdownpayment .k,
+#summaryView .kv-row.netdownpayment .v,
+#summaryView .kv-row.reservation .k,
+#summaryView .kv-row.reservation .v,
+#summaryView .kv-row.amortization .k,
+#summaryView .kv-row.amortization .v,
+#summaryView .kv-row.remaining .k,
+#summaryView .kv-row.remaining .v {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+/* Extra bottom spacing for consultant card */
+#summaryView .consultant-card {
+  margin-bottom: 30px;
+}
+
+
+/* --- Modern Elegant Theme --- */
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+  padding: 0;
+}
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  margin: 16px 0;
+  padding: 12px 14px;
+}
+.head {
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: 6px 6px 0 0;
+  margin: -12px -14px 12px -14px;
+}
+input[type="text"], input[type="number"], input[type="tel"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: 'Poppins', Arial, sans-serif;
+  transition: all 0.2s ease;
+}
+input[type="text"]:focus, input[type="number"]:focus, input[type="tel"]:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+  outline: none;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.actions .btn {
+  flex: 1;
+}
+/* Results compact rules */
+#summaryView .kv-row .k,
+#summaryView .kv-row .v {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+#summaryView .kv-row.discount .k,
+#summaryView .kv-row.discount .v,
+#summaryView .kv-row.total .k,
+#summaryView .kv-row.total .v,
+#summaryView .kv-row.downpayment .k,
+#summaryView .kv-row.downpayment .v,
+#summaryView .kv-row.netdownpayment .k,
+#summaryView .kv-row.netdownpayment .v,
+#summaryView .kv-row.reservation .k,
+#summaryView .kv-row.reservation .v,
+#summaryView .kv-row.amortization .k,
+#summaryView .kv-row.amortization .v,
+#summaryView .kv-row.remaining .k,
+#summaryView .kv-row.remaining .v {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+
+
+
+
+/* --- Premium Gradient Frosted Glass Inputs with Glow --- */
+@keyframes glowPulse {
+  0% { box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 0 2px rgba(37,99,235,0.25); }
+  50% { box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 0 4px rgba(37,99,235,0.35); }
+  100% { box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 0 2px rgba(37,99,235,0.25); }
+}
+input[type="text"], input[type="number"], input[type="tel"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  font-family: 'Poppins', Arial, sans-serif;
+  transition: all 0.3s ease;
+}
+input[type="text"]:focus, input[type="number"]:focus, input[type="tel"]:focus {
+  border-color: #2563eb;
+  background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+  backdrop-filter: blur(10px);
+  outline: none;
+  animation: glowPulse 1.5s infinite;
+}
+
+
+/* --- Frosted Glass Results --- */
+#summaryView {
+  background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 12px;
+}
+
+
+/* --- Compact & Even Card Layout --- */
+.card {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 10px;
+}
+.head {
+  font-size: 0.9rem;
+  padding: 6px 8px;
+}
+input[type="text"], input[type="number"], input[type="tel"] {
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+.btn {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+#summaryView {
+  padding: 10px;
+}
+
+
+/* --- Compact Consultant Card --- */
+#consultantCard {
+  font-size: 0.9rem;
+  padding: 8px !important;
+}
+
+</style>
+<style>
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+.summary-label {
+    flex: 1;
+    text-align: left;
+}
+.summary-value {
+    flex: 1;
+    text-align: right;
+}
+.hidden {
+    display: none;
+}
+</style></head>
+<body>
+<div class="container">
+<div class="brand">
+<h1>Property Quotation</h1>
+<div class="date-stamp">Generated: <span id="genDate">—</span></div>
+</div>
+<!-- INPUT VIEW -->
+<div id="inputView">
+<!-- Project Details -->
+<div class="card">
+<div class="head">PROJECT DETAILS</div>
+<div class="content grid-2">
+<div>
+<label>Project</label>
+<input id="pd_project" placeholder="e.g., Gold Residences" type="text"/>
+</div>
+<div>
+<label>Tower / Phase</label>
+<input id="pd_tower" placeholder="e.g., Tower 1" type="text"/>
+</div>
+<div>
+<label>Unit Type</label>
+<input id="pd_unittype" placeholder="e.g., 1BR w/ Balcony" type="text"/>
+</div>
+<div>
+<label>Unit No.</label>
+<input id="pd_unitno" placeholder="e.g., 21-B" type="text"/>
+</div>
+<div>
+<label>Floor</label>
+<input id="pd_floor" placeholder="e.g., 21st" type="text"/>
+</div>
+<div>
+<label>View</label>
+<input id="pd_view" placeholder="e.g., Amenity / City View" type="text"/>
+</div>
+</div>
+</div>
+<!-- Pricing & Discounts -->
+<div class="card">
+<div class="head">PRICING &amp; DISCOUNTS</div>
+<div class="content">
+<div class="grid-2">
+<div>
+<label>List Price (₱)</label>
+<input id="price_list" placeholder="e.g., 5800000" type="text"/>
+</div>
+<div>
+<label>Standard Discount (₱ or %)</label>
+<input id="disc_std" placeholder="e.g., 10% or 150000" type="text"/>
+</div>
+<div>
+<label>Special Discount (₱ or %)</label>
+<input id="disc_special" placeholder="e.g., 3% or 50000" type="text"/>
+</div>
+<div>
+<label>Additional Discount (₱ or %)</label>
+<input id="disc_add" placeholder="e.g., 2% or 25000" type="text"/>
+</div>
+<div>
+<label>Rebate (₱ or %)</label>
+<input id="disc_rebate" placeholder="e.g., 1% or 10000" type="text"/>
+</div>
+<div>
+<label>Other Charges (₱ or %)</label>
+<input id="other_charges" placeholder="e.g., 100000 or 2%" type="text"/>
+</div>
+</div>
+<div class="muted" style="margin-top:6px">VAT follows the ₱3.6M rule and will be auto-computed in the summary.</div>
+</div>
+</div>
+<!-- Payment Term Details -->
+<div class="card">
+<div class="head">PAYMENT TERM DETAILS</div>
+<div class="content">
+<div class="seg" id="termButtons">
+<button class="active" data-term="spot" type="button">Spot DP (Cash)</button>
+<button data-term="spread" type="button">Spread DP (Preselling)</button>
+<button data-term="split" type="button">Split DP</button>
+</div>
+<!-- Spot -->
+<div class="row" id="fields_spot" style="margin-top:10px">
+<div>
+<label>Downpayment %</label>
+<input id="spot_dp_pct" placeholder="e.g., 20" type="text"/>
+</div>
+<div>
+<label>Reservation Fee (₱)</label>
+<input id="spot_rf" placeholder="e.g., 25000" type="text"/>
+</div>
+<div>
+<label>No. of Months (optional)</label>
+<input id="spot_months" placeholder="e.g., 0" type="text"/>
+</div>
+</div>
+<!-- Spread -->
+<div class="row hidden" id="fields_spread" style="margin-top:10px">
+<div>
+<label>Downpayment % (Equity)</label>
+<input id="spread_dp_pct" placeholder="e.g., 10" type="text"/>
+</div>
+<div>
+<label>Reservation Fee (₱)</label>
+<input id="spread_rf" placeholder="e.g., 25000" type="text"/>
+</div>
+<div>
+<label>No. of Months</label>
+<input id="spread_months" placeholder="e.g., 12" type="text"/>
+</div>
+</div>
+<!-- Split -->
+<div class="row hidden" id="fields_split" style="margin-top:10px">
+<div>
+<label>Downpayment %</label>
+<input id="split_dp_pct" placeholder="e.g., 10" type="text"/>
+</div>
+<div>
+<label>Reservation Fee (₱)</label>
+<input id="split_rf" placeholder="e.g., 25000" type="text"/>
+</div>
+<div>
+<label>DP Equity %</label>
+<input id="split_equity_pct" placeholder="e.g., 10" type="text"/>
+</div>
+<div>
+<label>No. of Months</label>
+<input id="split_months" placeholder="e.g., 12" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Bank Financing (interest input only here) -->
+<div class="card">
+<div class="head">BANK FINANCING (INPUT)</div>
+<div class="content row-single">
+<div class="row-tight">
+<div>
+<label>Interest Rate % (Annual)</label>
+<input id="bank_interest" placeholder="e.g., 7.5" type="text"/>
+</div>
+</div>
+<div class="muted">Amortizations for 5 / 10 / 15 / 20 years are computed from the Remaining Balance after clicking <strong>Compute</strong>.</div>
+</div>
+</div>
+<!-- Agent / Property Consultant -->
+<div class="card">
+<div class="head">PROPERTY CONSULTANT</div>
+<div class="content grid-2">
+<div>
+<label>Name</label>
+<input id="agent_name" placeholder="e.g., Juan Dela Cruz" type="text"/>
+</div>
+<div>
+<label>Mobile No.</label>
+<input id="agent_mobile" placeholder="e.g., 0917 123 4567" type="text"/>
+</div>
+<div>
+<label>Position</label>
+<input id="agent_pos" placeholder="e.g., Property Consultant" type="text"/>
+</div>
+</div>
+</div>
+<div class="actions">
+<button class="btn btn-blue" id="btnCompute">Compute</button>
+</div>
+</div>
+<!-- SUMMARY VIEW -->
+<div id="summaryView" style="display:none">
+<div class="actions" style="justify-content:flex-start;margin-bottom:6px">
+<button class="btn btn-ghost" id="btnBack">Back / Edit</button>
+<button class="btn" id="btnScreenshot" style="margin-left:8px">Screenshot Mode</button>
+</div>
+<div class="summary-grid summary">
+<!-- Project Details (read-only) -->
+<div class="card compact">
+<div class="head">PROJECT DETAILS</div>
+<div class="content">
+<div class="kv">
+<div class="k">Project</div><div class="v" id="s_pd_project">—</div>
+<div class="k">Tower / Phase</div><div class="v" id="s_pd_tower">—</div>
+<div class="k">Unit Type</div><div class="v" id="s_pd_unittype">—</div>
+<div class="k">Unit No.</div><div class="v" id="s_pd_unitno">—</div>
+<div class="k">Floor</div><div class="v" id="s_pd_floor">—</div>
+<div class="k">View</div><div class="v" id="s_pd_view">—</div>
+</div>
+</div>
+</div>
+<!-- Quotation Summary -->
+<div class="card compact" id="cardSummary">
+<div class="head">QUOTATION SUMMARY</div>
+<div class="content">
+<div class="kv" id="sumKV">
+<div class="kv-row">
+<div class="k">List Price</div><div class="v" id="v_listprice">—</div>
+</div>
+<div class="kv-row" id="row_std">
+<div class="k em">Standard Discount</div><div class="v em" id="row_std_v"></div>
+</div>
+<div class="kv-row" id="row_special">
+<div class="k em">Special Discount</div><div class="v em" id="row_special_v"></div>
+</div>
+<div class="kv-row" id="row_add">
+<div class="k em">Additional Discount</div><div class="v em" id="row_add_v"></div>
+</div>
+<div class="kv-row" id="row_rebate">
+<div class="k em">Rebate</div><div class="v em" id="row_rebate_v"></div>
+</div>
+<div class="kv-row">
+<div class="k">Net List Price</div><div class="v" id="v_netlist">—</div>
+</div>
+<div class="divider"></div>
+<div class="kv-row">
+<div class="k">Other Charges</div><div class="v" id="row_other_v"></div>
+</div>
+<div class="kv-row">
+<div class="k" id="row_vat_k">VAT</div><div class="v" id="row_vat_v"></div>
+</div>
+<div class="divider"></div>
+<div class="kv-row">
+<div class="k em">TOTAL AMOUNT PAYABLE</div><div class="v em" id="v_tap">—</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Payment Term (dynamic per option) -->
+<div class="card compact" id="cardPT">
+<div class="head">PAYMENT TERM DETAILS</div>
+<div class="content">
+<div class="kv" id="ptKV">
+<!-- rows injected -->
+</div>
+</div>
+</div>
+<!-- Bank Financing -->
+<div class="card compact" id="cardBank">
+<div class="head">BANK FINANCING</div>
+<div class="content">
+<div class="kv" id="bankKV">
+<div class="k">Interest (Annual)</div><div class="v" id="v_interest">—</div>
+<div class="k">5 yrs – Est. Monthly</div><div class="v" id="v_b5">—</div>
+<div class="k">10 yrs – Est. Monthly</div><div class="v" id="v_b10">—</div>
+<div class="k">15 yrs – Est. Monthly</div><div class="v" id="v_b15">—</div>
+<div class="k">20 yrs – Est. Monthly</div><div class="v" id="v_b20">—</div>
+</div>
+<div class="note">This computation is for presentation purposes only and may change without prior notice.</div>
+</div>
+</div>
+<!-- Agent -->
+<div class="card compact">
+<div class="head">PROPERTY CONSULTANT</div>
+<div class="content">
+<div class="kv">
+<div class="k">Name</div><div class="v" id="s_agent_name">—</div>
+<div class="k">Mobile No.</div><div class="v" id="s_agent_mobile">—</div>
+<div class="k">Position</div><div class="v" id="s_agent_pos">—</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// ===== Helpers =====
+const peso = n => {
+  if(!isFinite(n)) return '—';
+  return '₱' + (Math.round((n + Number.EPSILON)*100)/100).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+};
+const readNum = el => {
+  const v = (document.getElementById(el).value || '').toString().replace(/,/g,'');
+  const n = parseFloat(v);
+  return isNaN(n) ? 0 : n;
+};
+const readTxt = el => (document.getElementById(el).value || '').trim();
+const isPercent = v => /%$/.test(v.trim());
+const parseValue = (raw, baseForPercent=0) => {
+  if(!raw) return {amount:0, isPct:false, raw:''};
+  const s = raw.toString().trim();
+  if(s.length===0) return {amount:0, isPct:false, raw:''};
+  if(isPercent(s)){
+    const p = parseFloat(s.replace('%','').trim());
+    const amt = isFinite(p) ? (baseForPercent * (p/100)) : 0;
+    return {amount:amt, isPct:true, pct:(isFinite(p)?p:0), raw:s};
+  }else{
+    const amt = parseFloat(s.replace(/[^0-9.\-]/g,''));
+    return {amount:isNaN(amt)?0:amt, isPct:false, raw:s};
+  }
+};
+
+// Sequential discount on a running base
+function applyDiscountsSequential(listPrice, entries){
+  // entries = array of {raw: '10%' or '20000'}
+  let base = listPrice;
+  const out = [];
+  for(const ent of entries){
+    const parsed = parseValue(ent, base); // % uses CURRENT base
+    const discAmt = Math.min(base, Math.max(0, parsed.amount));
+    base = base - discAmt;
+    out.push({label: ent.label, amount: discAmt, raw: ent});
+  }
+  return {net: Math.max(0, base), details: out};
+}
+
+// ===== Payment term visibility =====
+const termButtons = document.getElementById('termButtons');
+let currentTerm = 'spot';
+termButtons.addEventListener('click', (e)=>{
+  if(e.target.tagName!=='BUTTON') return;
+  [...termButtons.children].forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentTerm = e.target.dataset.term;
+  document.getElementById('fields_spot').classList.toggle('hidden', currentTerm!=='spot');
+  document.getElementById('fields_spread').classList.toggle('hidden', currentTerm!=='spread');
+  document.getElementById('fields_split').classList.toggle('hidden', currentTerm!=='split');
+});
+
+// ===== Compute main =====
+document.getElementById('btnCompute').addEventListener('click', ()=>{
+  const listPrice = readNum('price_list');
+
+  // Discounts (successive)
+  const dStd = readTxt('disc_std');
+  const dSpecial = readTxt('disc_special');
+  const dAdd = readTxt('disc_add');
+  const dReb = readTxt('disc_rebate');
+  const discs = [
+    {label:'Standard Discount', value: dStd},
+    {label:'Special Discount', value: dSpecial},
+    {label:'Additional Discount', value: dAdd},
+    {label:'Rebate', value: dReb}
+  ];
+  const discApplied = applyDiscountsSequential(listPrice, discs.map(d=>({label:d.label, toString:()=>d.value, value:d.value, raw:d.value})));
+  const netList = discApplied.net;
+
+  // Other charges (either % or ₱) on Net List
+  const ocParsed = parseValue(readTxt('other_charges'), netList);
+  const otherCharges = Math.max(0, ocParsed.amount);
+
+  // VAT 12% if (netList + otherCharges) > 3.6M, else 0
+  const vatBase = netList + otherCharges;
+  const vat = (vatBase > 3600000) ? (vatBase * 0.12) : 0;
+
+  const TAP = netList + otherCharges + vat;
+
+  // ----- Payment term computations -----
+  let dp = 0, netDP = 0, dpEquity = 0, months = 0, monthly = 0, remaining = 0;
+
+  if(currentTerm==='spot'){
+    const pct = readNum('spot_dp_pct')/100;
+    const rf  = readNum('spot_rf');
+    months = Math.max(0, Math.floor(readNum('spot_months'))||0);
+    dp = TAP * (isFinite(pct)?pct:0);
+    netDP = Math.max(0, dp - rf);
+    remaining = Math.max(0, TAP - dp);
+    monthly = (months>0) ? (netDP / months) : 0; // optional display if user provided months
+  }
+  if(currentTerm==='spread'){
+    const pct = readNum('spread_dp_pct')/100; // equity
+    const rf  = readNum('spread_rf');
+    months = Math.max(1, Math.floor(readNum('spread_months'))||0);
+    dp = TAP * (isFinite(pct)?pct:0); // DP (equity)
+    netDP = Math.max(0, dp - rf);
+    dpEquity = dp;
+    monthly = (months>0) ? (netDP / months) : 0;
+    remaining = Math.max(0, TAP - dp);
+  }
+  if(currentTerm==='split'){
+    const pctDP = readNum('split_dp_pct')/100;
+    const rf  = readNum('split_rf');
+    const pctEq = readNum('split_equity_pct')/100;
+    months = Math.max(1, Math.floor(readNum('split_months'))||0);
+    dp = TAP * (isFinite(pctDP)?pctDP:0);
+    netDP = Math.max(0, dp - rf);
+    dpEquity = TAP * (isFinite(pctEq)?pctEq:0);
+    monthly = (months>0) ? (dpEquity / months) : 0;
+    remaining = Math.max(0, TAP - dp);
+  }
+
+  // ----- Bank financing (on remaining balance) -----
+  const interest = readNum('bank_interest');
+  function amort(p, annualPct, years){
+    if(p<=0 || annualPct<=0 || years<=0) return 0;
+    const i = (annualPct/100)/12;
+    const n = years*12;
+    const f = Math.pow(1+i, n);
+    return p * (i * f) / (f - 1);
+  }
+  const b5  = amort(remaining, interest, 5);
+  const b10 = amort(remaining, interest, 10);
+  const b15 = amort(remaining, interest, 15);
+  const b20 = amort(remaining, interest, 20);
+
+  // ===== Populate Summary =====
+  const set = (id, val) => document.getElementById(id).textContent = val;
+
+  // Project details
+  set('s_pd_project',   readTxt('pd_project') || '—');
+  set('s_pd_tower',     readTxt('pd_tower') || '—');
+  set('s_pd_unittype',  readTxt('pd_unittype') || '—');
+  set('s_pd_unitno',    readTxt('pd_unitno') || '—');
+  set('s_pd_floor',     readTxt('pd_floor') || '—');
+  set('s_pd_view',      readTxt('pd_view') || '—');
+
+  // Pricing
+  set('v_listprice', peso(listPrice));
+
+  // Discounts: hide empty
+  const rows = [
+    ['row_std_k','row_std_v', discApplied.details[0]?.amount || 0],
+    ['row_special_k','row_special_v', discApplied.details[1]?.amount || 0],
+    ['row_add_k','row_add_v', discApplied.details[2]?.amount || 0],
+    ['row_rebate_k','row_rebate_v', discApplied.details[3]?.amount || 0]
+  ];
+  rows.forEach(([k,v,amt], i)=>{
+    const show = amt > 0.0001;
+    const rowId = ['row_std','row_special','row_add','row_rebate'][i];
+    const rowEl = document.getElementById(rowId);
+    if (rowEl) rowEl.style.display = show ? 'contents' : 'none';
+    set(v, show ? ('- ' + peso(amt)) : '');
+});
+
+  set('v_netlist', peso(netList));
+
+  // --- Other Charges row (always visible, keep grid alignment) ---
+set('row_other_v', '+ ' + peso(otherCharges));
+
+// --- VAT row (always visible, with 3.6M rule, aligned in grid) ---
+if (vatBase <= 3600000) {
+  document.getElementById('row_vat_k').textContent = 'VAT (0% – ₱3.6M rule)';
+} else {
+  document.getElementById('row_vat_k').textContent = 'VAT (12%)';
+}
+set('row_vat_v', '+ ' + peso(vat));
+set('v_tap', peso(TAP));
+
+  // Payment term section (dynamic rows)
+  const ptKV = document.getElementById('ptKV');
+  ptKV.innerHTML = ''; // reset
+  function addRow(k, v, emphasize=false){
+    const dk = document.createElement('div'); dk.className='k'+(emphasize?' em':'');
+    dk.textContent = k;
+    const dv = document.createElement('div'); dv.className='v'+(emphasize?' em':'');
+    dv.textContent = v;
+    ptKV.append(dk, dv);
+  }
+  if(currentTerm==='spot'){
+    addRow('Plan', 'Spot DP (Cash)');
+    addRow('Downpayment', peso(dp), true);
+    addRow('Reservation Fee', '- ' + peso(readNum('spot_rf')), true);
+    addRow('Net Downpayment', peso(netDP), true);
+    if(months>0){ addRow('No. of Months', months.toString()); addRow('Monthly Amortization', peso(monthly), true); }
+    addRow('Remaining Balance', peso(remaining), true);
+  }
+  if(currentTerm==='spread'){
+    addRow('Plan', 'Spread DP (Preselling)');
+    addRow('Downpayment (Equity)', peso(dpEquity), true);
+    addRow('Reservation Fee', '- ' + peso(readNum('spread_rf')), true);
+    addRow('Net Downpayment', peso(netDP), true);
+    addRow('No. of Months', (months||0).toString());
+    addRow('Monthly Amortization', peso(monthly), true);
+    addRow('Remaining Balance', peso(remaining), true);
+  }
+  if(currentTerm==='split'){
+    addRow('Plan', 'Split DP');
+    addRow('Downpayment', peso(dp), true);
+    addRow('Reservation Fee', '- ' + peso(readNum('split_rf')), true);
+    addRow('Net Downpayment', peso(netDP), true);
+    addRow('Downpayment (Equity)', peso(dpEquity), true);
+    addRow('No. of Months', (months||0).toString());
+    addRow('Monthly Amortization', peso(monthly), true);
+    addRow('Remaining Balance', peso(remaining), true);
+  }
+
+  // Bank section (hide if no interest or remaining=0)
+  const showBank = (interest>0 && remaining>0);
+  document.getElementById('cardBank').style.display = showBank ? 'block' : 'none';
+  set('v_interest', interest>0 ? (interest.toFixed(2) + '%') : '—');
+  set('v_b5',  b5 ? peso(b5)  : '—');
+  set('v_b10', b10? peso(b10) : '—');
+  set('v_b15', b15? peso(b15) : '—');
+  set('v_b20', b20? peso(b20) : '—');
+
+  // Agent
+  set('s_agent_name',  readTxt('agent_name')  || '—');
+  set('s_agent_mobile',readTxt('agent_mobile')|| '—');
+  set('s_agent_pos',   readTxt('agent_pos')   || '—');
+
+  // Toggle views
+  document.getElementById('inputView').style.display = 'none';
+  document.getElementById('summaryView').style.display = 'block';
+  setTimeout(()=>document.getElementById('summaryView').classList.add('show'),25);
+
+  // Date
+  const d = new Date();
+  document.getElementById('genDate').textContent = d.toLocaleDateString('en-PH', {year:'numeric', month:'short', day:'2-digit'});
+});
+
+document.getElementById('btnBack').addEventListener('click', ()=>{
+  document.getElementById('summaryView').classList.remove('show');
+  document.getElementById('summaryView').style.display = 'none';
+  document.getElementById('inputView').style.display = 'block';
+});
+
+
+function enableScreenshotMode() {
+  document.body.classList.add("screenshot-mode");
+}
+
+
+// --- Bank Financing Amortization Computation ---
+function computeBankAmortizations(balance, annualRate) {
+  const card = document.getElementById("bankAmortCard");
+  if (!card) return;
+  const rate = parseFloat(annualRate) / 100.0;
+  document.getElementById("bankInterestUsed").innerText = (rate*100).toFixed(2) + "% per annum";
+
+  const terms = [5, 10, 15, 20];
+  terms.forEach(function(years) {
+    const n = years * 12;
+    const r = rate / 12;
+    let monthly = 0;
+    if (r > 0) {
+      monthly = (balance * r) / (1 - Math.pow(1 + r, -n));
+    } else {
+      monthly = balance / n;
+    }
+    document.getElementById("amort" + years).innerText = monthly.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  });
+  card.style.display = "block";
+}
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".summary-row").forEach(row => {
+        let valueCell = row.querySelector(".summary-value");
+        if (valueCell && (valueCell.textContent.trim() === "" || valueCell.textContent.trim() === "₱0.00")) {
+            row.classList.add("hidden");
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const exempt = ['price_list', 'disc_std', 'disc_special', 'disc_add', 'disc_rebate', 'other_charges', 'spot_rf', 'spread_rf', 'split_rf', 'bank_interest', 'agent_mobile'];
+  document.querySelectorAll("input").forEach(el => {
+    el.addEventListener("input", function(e) {
+      if (exempt.includes(el.id)) return; // skip formatting for exempted IDs
+    });
+  });
+});
+</script>
+<script>
+// Safe input formatting: only format a small set of numeric fields on blur; do not modify value while typing.
+(function(){
+  const numericIds = ['price_list','other_charges','spot_rf','spread_rf','split_rf',
+                      'spot_months','spread_months','split_months','bank_interest'];
+  function cleanForParse(v){
+    if(v === null || v === undefined) return '';
+    return String(v).replace(/[,₱\s]/g, '').replace(/[^\d.]/g, '');
+  }
+  function addCommasToInteger(str){
+    return String(str).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  numericIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    // On focus: remove commas to make editing easier
+    el.addEventListener('focus', function(e){
+      this.dataset.prev = this.value;
+      this.value = String(this.value).replace(/,/g,'');
+    });
+    // On blur: clean non-numeric (except dot), then format integer part with commas
+    el.addEventListener('blur', function(e){
+      const raw = this.value || '';
+      const cleaned = cleanForParse(raw);
+      if(cleaned === '') { this.value = ''; return; }
+      if(cleaned.indexOf('.') > -1){
+        const parts = cleaned.split('.');
+        const intPart = parts[0] || '0';
+        const decPart = parts[1] || '';
+        this.value = addCommasToInteger(intPart) + (decPart ? '.' + decPart : '');
+      } else {
+        this.value = addCommasToInteger(cleaned);
+      }
+    });
+    // Intentionally do NOT modify value on input to avoid blocking typing
+  });
+})();
+</script>
+<script defer="">
+// Safe input formatting: numeric formatting only for certain fields; allow free typing in Project Details & Consultant fields.
+(function(){
+  const numericIds = ['price_list','other_charges','spot_rf','spread_rf','split_rf',
+                      'spot_months','spread_months','split_months','bank_interest'];
+  const freeIds = ['pd_project','pd_tower','pd_unittype','pd_unitno','pd_floor','pd_view',
+                   'agent_name','agent_mobile','agent_pos'];
+  function cleanForParse(v){
+    if(v === null || v === undefined) return '';
+    return String(v).replace(/[,₱\s]/g, '').replace(/[^\d.]/g, '');
+  }
+  function addCommasToInteger(str){
+    return String(str).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  numericIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('focus', function(e){
+      this.value = String(this.value).replace(/,/g,'');
+    });
+    el.addEventListener('blur', function(e){
+      const raw = this.value || '';
+      const cleaned = cleanForParse(raw);
+      if(cleaned === '') { this.value = ''; return; }
+      if(cleaned.indexOf('.') > -1){
+        const parts = cleaned.split('.');
+        const intPart = parts[0] || '0';
+        const decPart = parts[1] || '';
+        this.value = addCommasToInteger(intPart) + (decPart ? '.' + decPart : '');
+      } else {
+        this.value = addCommasToInteger(cleaned);
+      }
+    });
+  });
+  // freeIds: no formatting, just allow free typing, so no event listeners
+})();
+</script>
+</body>
+</html>
