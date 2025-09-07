@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Property Quotation – Final</title>
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --card-bg: rgba(255,255,255,0.82);
+    --glass: blur(12px) saturate(120%);
+    --ink:#1c2530;
+    --muted:#5c6b7a;
+    --accent:#0f5ea9;
+    --accent-600:#0b4a86;
+    --accent-50:#e8f1fb;
+    --ok:#159957;
+    --warn:#b54708;
+    --grid-gap:12px;
+    --radius:14px;
+    --shadow: 0 10px 25px rgba(16,38,74,.08), 0 2px 6px rgba(16,38,74,.06);
+    --xs:11.5px;
+    --sm:12.5px;
+    --base:13.5px;
+    --lg:15px;
+    --xl:17px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #ffffff 10%, #f1f6ff 35%, transparent 60%),
+      radial-gradient(900px 600px at 110% -20%, #e6f0ff 10%, #eef4ff 50%, transparent 70%),
+      var(--bg);
+    line-height:1.35;
+  }
+  .wrap{
+    max-width:980px;
+    margin:16px auto 72px;
+    padding:0 12px;
+  }
+  .brand{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .brand .title{
+    font-weight:800; letter-spacing:.4px; color:var(--accent);
+    font-size:18px;
+  }
+  .brand .tag{ color:var(--muted); font-size:var(--sm); }
+  .cards{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:var(--grid-gap);
+  }
+  @media (min-width:720px){
+    .cards{ grid-template-columns: 1fr 1fr; }
+    .span-2{ grid-column:1 / -1; }
+  }
+  .card{
+    background:var(--card-bg);
+    -webkit-backdrop-filter:var(--glass);
+    backdrop-filter:var(--glass);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid rgba(15,94,169,.08);
+    overflow:hidden;
+  }
+  .card .hdr{
+    padding:10px 14px;
+    background:linear-gradient(180deg,#1671c9, #0f5ea9);
+    color:#fff;
+    font-weight:700;
+    font-size:var(--sm);
+    letter-spacing:.35px;
+  }
+  .card .body{ padding:12px; }
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px 12px;
+  }
+  .grid1{ display:grid; grid-template-columns:1fr; gap:10px; }
+  .control{
+    display:flex; flex-direction:column; gap:6px;
+    background:rgba(255,255,255,.65);
+    border:1px solid rgba(15,94,169,.12);
+    border-radius:10px;
+    padding:8px 10px;
+  }
+  label{ font-size:var(--xs); color:var(--muted); font-weight:600; letter-spacing:.3px; }
+  .input, select{
+    border:none; outline:none; background:transparent;
+    font-size:var(--base);
+    padding:4px 0;
+    width:100%;
+  }
+  .small-note{ font-size:var(--xs); color:var(--muted); }
+  .btn-row{
+    display:flex; gap:8px; flex-wrap:wrap; padding:8px 0 0;
+  }
+  .btn{
+    appearance:none; border:0; border-radius:12px; padding:10px 14px;
+    font-weight:700; letter-spacing:.3px; cursor:pointer;
+    background:var(--accent); color:#fff; box-shadow:var(--shadow);
+  }
+  .btn.alt{ background:#e9eef6; color:#20405f; }
+  .btn.ghost{ background:transparent; color:var(--accent); border:1px solid var(--accent-600); }
+  .btn.warn{ background:#ffe8d6; color:#8a3b00; border:1px solid #ffcf9b; }
+  .section-actions{ margin-top:8px; }
+  /* Summary view */
+  .summary-wrap{ display:none; }
+  .summary-grid{
+    display:grid; grid-template-columns:1fr; gap:12px;
+  }
+  @media(min-width:720px){
+    .summary-grid{ grid-template-columns:1fr 1fr; }
+  }
+  .kv{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:6px 0; }
+  .kv .k{ color:#0f5ea9; font-weight:800; font-size:var(--sm); }
+  .kv .v{ font-weight:700; font-size:var(--sm); color:#17212b; }
+  .kv.dim .k{ color:#617387; font-weight:700; }
+  .kv.dim .v{ color:#3a4a5b; font-weight:600; }
+  .divider{ height:1px; background:rgba(15,94,169,.12); margin:8px 0 4px; }
+  .muted{ color:var(--muted); }
+  .foot-note{ font-size:var(--xs); color:#6b7b8d; margin-top:8px; font-style:italic; }
+  .mono{ font-variant-numeric: tabular-nums; }
+  /* Hide-on-print / Show-on-print */
+  @media print{
+    body{ background:#fff; }
+    .hide-on-print{ display:none !important; }
+    .summary-wrap{ display:block !important; }
+    .wrap{ margin:0; max-width:100%; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand hide-on-print">
+      <div>
+        <div class="title">PROPERTY QUOTATION</div>
+        <div class="tag">Modern brochure-style | Mobile-first</div>
+      </div>
+      <div class="small-note">Final build</div>
+    </div>
+
+    <!-- ====== INPUT VIEW (cards) ====== -->
+    <div id="inputView" class="cards hide-on-print">
+      
+      <!-- Project / Unit Details -->
+      <section class="card span-2">
+        <div class="hdr">UNIT DETAILS</div>
+        <div class="body grid2">
+          <div class="control"><label>Project</label><input class="input" id="proj" placeholder="e.g., Azure North" /></div>
+          <div class="control"><label>Tower / Phase</label><input class="input" id="tower" placeholder="e.g., Tower A" /></div>
+          <div class="control"><label>Unit Type</label><input class="input" id="unitType" placeholder="e.g., 1BR w/ Balcony" /></div>
+          <div class="control"><label>Unit No.</label><input class="input" id="unitNo" placeholder="e.g., 12-08" /></div>
+          <div class="control"><label>View</label><input class="input" id="view" placeholder="e.g., City View" /></div>
+          <div class="control"><label>Parking (optional)</label><input class="input" id="parking" placeholder="e.g., 1 slot" /></div>
+        </div>
+      </section>
+
+      <!-- Pricing & Discounts -->
+      <section class="card span-2">
+        <div class="hdr">PRICING &amp; DISCOUNTS</div>
+        <div class="body grid2">
+          <div class="control"><label>List Price (₱)</label><input type="number" class="input" id="listPrice" placeholder="0.00" /></div>
+          <div class="control"><label>Standard Discount (%)</label><input type="number" class="input" id="discStd" placeholder="e.g., 5" /></div>
+          <div class="control"><label>Special Discount (%)</label><input type="number" class="input" id="discSpecial" placeholder="e.g., 3" /></div>
+          <div class="control"><label>Additional Discount (%)</label><input type="number" class="input" id="discAddl" placeholder="e.g., 2" /></div>
+          <div class="control"><label>Rebate (%)</label><input type="number" class="input" id="discRebate" placeholder="e.g., 1" /></div>
+          <div class="control"><label>Other Charges (%)</label><input type="number" class="input" id="otherPct" placeholder="e.g., 2.5" /></div>
+          <div class="control"><label>VAT (auto rule)</label><input disabled class="input" value="Computed in summary (₱3.6M rule)" /></div>
+        </div>
+      </section>
+
+      <!-- Payment Term -->
+      <section class="card span-2">
+        <div class="hdr">PAYMENT TERM DETAILS</div>
+        <div class="body">
+          <div class="btn-row" style="margin-bottom:10px">
+            <button type="button" class="btn alt" data-pt="spot" onclick="setPT('spot')">Spot DP (Cash)</button>
+            <button type="button" class="btn alt" data-pt="split" onclick="setPT('split')">Split (Spot + Monthly)</button>
+            <button type="button" class="btn alt" data-pt="spread" onclick="setPT('spread')">Spread DP (Preselling)</button>
+          </div>
+          <div class="grid2" id="ptFields">
+            <div class="control"><label>Downpayment %</label><input type="number" class="input" id="dpPct" placeholder="e.g., 10" /></div>
+            <div class="control"><label>Reservation Fee (₱)</label><input type="number" class="input" id="rf" placeholder="e.g., 100000" /></div>
+            <div class="control eq-only"><label>Downpayment (Equity) %</label><input type="number" class="input" id="eqPct" placeholder="e.g., 10" /></div>
+            <div class="control eq-only"><label>No. of Months</label><input type="number" class="input" id="months" placeholder="e.g., 24" /></div>
+          </div>
+          <div class="small-note">Fields auto-adjust per option. Net DP, Equity & monthly are shown in summary.</div>
+        </div>
+      </section>
+
+      <!-- Bank -->
+      <section class="card span-2">
+        <div class="hdr">BANK – INTEREST</div>
+        <div class="body grid2">
+          <div class="control"><label>Annual Interest Rate (%)</label><input type="number" class="input" id="rate" placeholder="e.g., 7.5" /></div>
+          <div class="control"><label>Loan Tenors (fixed)</label><input class="input" disabled value="5 / 10 / 15 / 20 years (auto in summary)" /></div>
+        </div>
+        <div class="section-actions body">
+          <div class="btn-row">
+            <button class="btn" id="btnCompute" onclick="computeAll()">Compute</button>
+            <button class="btn ghost" id="btnEdit" style="display:none" onclick="backToEdit()">Back / Edit</button>
+            <button class="btn" id="btnPDF" style="display:none" onclick="window.print()">Save as PDF</button>
+            <button class="btn warn" onclick="resetAll()">Reset</button>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /inputView -->
+
+    <!-- ====== SUMMARY VIEW (cards only) ====== -->
+    <div id="summaryView" class="summary-wrap">
+      <div class="cards summary-grid">
+
+        <!-- Summary Project Details -->
+        <section class="card">
+          <div class="hdr">PROJECT DETAILS</div>
+          <div class="body grid1" id="s_proj">
+            <!-- populated -->
+          </div>
+        </section>
+
+        <!-- Quotation Summary -->
+        <section class="card">
+          <div class="hdr">QUOTATION SUMMARY</div>
+          <div class="body" id="s_quote">
+            <!-- populated -->
+          </div>
+        </section>
+
+        <!-- Payment Term Summary -->
+        <section class="card">
+          <div class="hdr">PAYMENT TERM</div>
+          <div class="body" id="s_payment">
+            <!-- populated -->
+          </div>
+        </section>
+
+        <!-- Bank Financing -->
+        <section class="card">
+          <div class="hdr">BANK FINANCING</div>
+          <div class="body" id="s_bank">
+            <!-- populated -->
+          </div>
+          <div class="body foot-note"><em>This computation is for presentation purposes only and may change without prior notice.</em></div>
+        </section>
+
+        <!-- Agent / Consultant -->
+        <section class="card span-2">
+          <div class="hdr">PROPERTY CONSULTANT</div>
+          <div class="body grid2" id="s_agent">
+            <div class="control"><label>Name</label><input class="input" id="agentName" placeholder="Your full name" /></div>
+            <div class="control"><label>Contact No.</label><input class="input" id="agentPhone" placeholder="+63 9xx xxx xxxx" /></div>
+            <div class="control"><label>Position</label><input class="input" id="agentRole" placeholder="Property Consultant" /></div>
+            <div class="control"><label>Email</label><input class="input" id="agentEmail" placeholder="you@email.com" /></div>
+          </div>
+        </section>
+
+      </div><!-- /summary-grid -->
+
+      <div class="section-actions" style="margin-top:10px">
+        <div class="btn-row">
+          <button class="btn ghost" onclick="backToEdit()">Back / Edit</button>
+          <button class="btn" onclick="window.print()">Save as PDF</button>
+        </div>
+      </div>
+    </div><!-- /summaryView -->
+
+  </div><!-- /wrap -->
+
+<script>
+  // ---- helpers
+  const $ = (id)=>document.getElementById(id);
+  const fmt = (v)=>{
+    if(isNaN(v)) return "—";
+    return "₱ " + Number(v).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+  };
+  const pct = (v)=> isNaN(v)||v===null? 0 : (Number(v)/100);
+
+  // state
+  let PT = 'spot'; // spot | split | spread
+  function setPT(mode){
+    PT = mode;
+    // toggle equity-only fields
+    const showEq = (mode!=='spot'); // split & spread show equity fields
+    document.querySelectorAll('.eq-only').forEach(el=>{
+      el.style.display = showEq ? 'flex' : 'none';
+    });
+    // highlight active
+    document.querySelectorAll('[data-pt]').forEach(btn=>{
+      btn.style.outline = (btn.getAttribute('data-pt')===mode) ? '2px solid #89b9ff' : 'none';
+      btn.style.background = (btn.getAttribute('data-pt')===mode) ? '#dfeeff' : '#e9eef6';
+      btn.style.color = (btn.getAttribute('data-pt')===mode) ? '#0b3f7a' : '#20405f';
+    });
+  }
+  setPT('spot');
+
+  function successiveDiscounts(listPrice, ds){
+    // ds = [std,special,addl,rebate] in percent (0-100)
+    let base = Number(listPrice)||0;
+    let lines = [];
+    const names = ["Standard Discount","Special Discount","Additional Discount","Rebate"];
+    ds.forEach((d,i)=>{
+      const p = pct(d);
+      const less = base * p;
+      base = base - less;
+      lines.push({name:names[i], rate:Number(d)||0, amount:less});
+    });
+    return { nlp: base, lines };
+  }
+
+  function computeAll(){
+    const lp = Number($('listPrice').value)||0;
+    const ds = [ $('discStd').value, $('discSpecial').value, $('discAddl').value, $('discRebate').value ].map(v=>Number(v)||0);
+    const otherPct = Number($('otherPct').value)||0;
+    const dpPct = Number($('dpPct').value)||0;
+    const rf = Number($('rf').value)||0;
+    const eqPct = Number($('eqPct').value)||0;
+    const months = Math.max(1, Number($('months').value)||0);
+    const rate = Number($('rate').value)||0;
+
+    // discounts (successive)
+    const disc = successiveDiscounts(lp, ds);
+    const nlp = disc.nlp;
+
+    // other charges on NLP (as agreed)
+    const otherAmt = nlp * pct(otherPct);
+    const tapBeforeVAT = nlp + otherAmt;
+
+    // VAT rule: NLP <= 3.6M exempt else 12% of NLP (as per instruction to compute on NLP)
+    const vatAmt = (nlp <= 3600000 && nlp>0) ? 0 : (nlp * 0.12);
+    const tap = tapBeforeVAT + vatAmt;
+
+    // Payment term
+    const dpAmt = tap * pct(dpPct);
+    const netDP = Math.max(0, dpAmt - rf);
+    let eqAmt = 0;
+    if(PT==='split' || PT==='spread'){
+      eqAmt = tap * pct(eqPct);
+    }
+    const monthly = (months>0) ? (eqAmt / months) : 0;
+    const remainingBal = Math.max(0, tap - (dpAmt + eqAmt));
+
+    // Bank amortizations (remainingBal)
+    const tenorYears = [5,10,15,20];
+    const bankRows = tenorYears.map(y=>{
+      const n = y*12;
+      const i = (rate/100)/12;
+      const pmt = (i===0) ? (remainingBal/n) : (remainingBal * (i*Math.pow(1+i,n)) / (Math.pow(1+i,n)-1));
+      return { y, pmt };
+    });
+
+    // --- Populate SUMMARY ---
+    // project details
+    const proj = $('proj').value, tower=$('tower').value, unitType=$('unitType').value, unitNo=$('unitNo').value, view=$('view').value, parking=$('parking').value;
+    const s_proj = $('s_proj');
+    s_proj.innerHTML = '';
+    const addLine = (k,v)=>{
+      if(!v) return;
+      const row = document.createElement('div'); row.className='kv dim';
+      row.innerHTML = `<div class="k">${k}</div><div class="v mono">${v}</div>`;
+      s_proj.appendChild(row);
+    };
+    addLine('Project', proj);
+    addLine('Tower / Phase', tower);
+    addLine('Unit Type', unitType);
+    addLine('Unit No.', unitNo);
+    addLine('View', view);
+    addLine('Parking', parking);
+
+    // quotation
+    const s_quote = $('s_quote');
+    s_quote.innerHTML = '';
+    const kv = (k,v,dim=false)=>{
+      const row = document.createElement('div'); row.className = 'kv' + (dim?' dim':'');
+      row.innerHTML = `<div class="k">${k}</div><div class="v mono">${v}</div>`;
+      s_quote.appendChild(row);
+    };
+    kv('List Price', fmt(lp));
+    disc.lines.forEach(line=>{
+      if(line.rate){
+        const name = line.name + ` (${(line.rate||0).toFixed(2)}%)`;
+        kv(name, "– " + fmt(line.amount), true);
+      }
+    });
+    kv('Net List Price', fmt(nlp));
+    if(otherPct){ kv(`Other Charges (${otherPct.toFixed(2)}%)`, fmt(otherAmt), true); }
+    kv('VAT', vatAmt===0 ? '₱ 0.00 (VAT Exempt)' : fmt(vatAmt), true);
+    const divider = document.createElement('div'); divider.className='divider'; s_quote.appendChild(divider);
+    kv('TOTAL AMOUNT PAYABLE', fmt(tap));
+
+    // payment term
+    const s_payment = $('s_payment');
+    s_payment.innerHTML = '';
+    const paymentHeader = document.createElement('div'); paymentHeader.className='kv dim';
+    paymentHeader.innerHTML = `<div class="k">Option</div><div class="v mono">${PT.toUpperCase()}</div>`;
+    s_payment.appendChild(paymentHeader);
+    const pv = (k,v)=>{ if(v!==null && v!==undefined){ const row=document.createElement('div'); row.className='kv dim'; row.innerHTML=`<div class="k">${k}</div><div class="v mono">${v}</div>`; s_payment.appendChild(row);} };
+    if(dpPct) pv('Downpayment', fmt(dpAmt));
+    if(rf) pv('Reservation Fee', fmt(rf));
+    if(dpPct) pv('Net Downpayment', fmt(netDP));
+    if(eqPct && (PT!=='spot')) pv('Downpayment (Equity)', fmt(eqAmt));
+    if(eqPct && months && (PT!=='spot')) pv('No. of Months', String(months));
+    if(eqPct && months && (PT!=='spot')) pv('Monthly Amortization', fmt(monthly));
+    pv('Remaining Balance', fmt(remainingBal));
+
+    // bank
+    const s_bank = $('s_bank');
+    s_bank.innerHTML = '';
+    const rateRow = document.createElement('div'); rateRow.className='kv dim'; rateRow.innerHTML=`<div class="k">Interest Rate</div><div class="v mono">${(rate||0).toFixed(2)}%</div>`; s_bank.appendChild(rateRow);
+    bankRows.forEach(r=>{
+      const row = document.createElement('div'); row.className='kv dim';
+      row.innerHTML = `<div class="k">${r.y} yrs Est. Monthly</div><div class="v mono">${fmt(r.pmt)}</div>`;
+      s_bank.appendChild(row);
+    });
+
+    // toggle views
+    $('inputView').style.display='none';
+    $('summaryView').style.display='block';
+    $('btnEdit').style.display='inline-block';
+    $('btnPDF').style.display='inline-block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function backToEdit(){
+    $('summaryView').style.display='none';
+    $('inputView').style.display='grid';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function resetAll(){ window.location.reload(); }
+</script>
+</body>
+</html>
