@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Property Quotation — Mobile</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --card: rgba(255,255,255,0.65);
+    --border: rgba(0,0,0,0.06);
+    --ink:#1a1f36;
+    --muted:#6b7280;
+    --brand:#0f6fff;
+    --brand-ink:#0a2a66;
+    --accent:#eef4ff;
+    --ok:#059669;
+    --warn:#b45309;
+    --shadow:0 10px 25px rgba(16,24,40,.08), 0 2px 6px rgba(16,24,40,.06);
+    --radius:14px;
+    --gap:14px;
+    --input:#fafafa;
+    --chip:#0f6fff15;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.35;
+  }
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:18px 14px 80px;
+  }
+
+  /* Glassy cards */
+  .card{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .card h2, .card h3{
+    margin:0 0 10px;
+    font-size:16px;
+    letter-spacing:.2px;
+    font-weight:700;
+    color:var(--brand-ink);
+  }
+  .subtle{
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  /* Two-column compact form grids */
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap);
+  }
+  @media(min-width:480px){
+    .grid.two{
+      grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field label{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .field input, .field select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background: var(--input);
+    outline:none;
+    font-size:14px;
+  }
+  .field input::placeholder{ color:#9aa3b2; opacity:.8;}
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:var(--chip);
+    color:var(--brand-ink);
+    font-weight:600;
+    font-size:12px;
+  }
+
+  /* Payment term buttons */
+  .seg{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .seg button{
+    flex:1;
+    min-width: 100px;
+    padding:10px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--brand-ink);
+    font-weight:700;
+    cursor:pointer;
+  }
+  .seg button.active{
+    background: var(--brand);
+    color:#fff;
+  }
+
+  /* Action buttons */
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .btn{
+    padding:11px 14px;
+    border-radius:12px;
+    border: none;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .primary{ background:var(--brand); color:#fff; }
+  .ghost{ background:#fff; color:var(--brand-ink); border:1px solid var(--border); }
+  .danger{ background:#ef4444; color:#fff; }
+
+  /* Summary grid */
+  .summary-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  @media(min-width:520px){
+    .summary-grid{ grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .kv{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px;
+  }
+  .kv .k{
+    font-size:11px;
+    color:var(--brand-ink);
+    font-weight:800;
+    letter-spacing:.25px;
+  }
+  .kv .v{
+    margin-top:6px;
+    font-size:14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .hl{ color: var(--brand); font-weight:900; }
+
+  /* Sections show/hide on compute */
+  .is-output-only .input-section{ display:none !important; }
+  .is-output-only .output-section{ display:block !important; }
+  .output-section{ display:none; }
+
+  /* Print only the output */
+  @media print{
+    body{ background:#fff; }
+    .input-section, .actions, .seg { display:none !important; }
+    .card{ box-shadow:none; border-color:#e5e7eb; }
+    .wrap{ padding:0; }
+  }
+
+  /* Tiny helper */
+  .muted{ color:var(--muted); }
+
+  /* Spacing helpers */
+  .spacer{ height:8px;}
+</style>
+</head>
+<body>
+  <div class="wrap" id="page">
+    <!-- Header / Title -->
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="chip">Property Quotation</div>
+        <div class="subtle" style="margin-top:6px;">Modern, compact, brochure-style mobile layout</div>
+      </div>
+      <div class="subtle" id="today"></div>
+    </div>
+
+    <!-- INPUT SECTION -->
+    <div class="input-section">
+      <!-- 1) Project Details -->
+      <div class="card">
+        <h2>Project Details</h2>
+        <div class="grid two">
+          <div class="field"><label>Project Name</label><input id="projName" placeholder="South Residences" /></div>
+          <div class="field"><label>Unit Type</label><input id="unitType" placeholder="1BR" /></div>
+          <div class="field"><label>Unit</label><input id="unitId" placeholder="B030916" /></div>
+          <div class="field"><label>View</label><input id="view" placeholder="Mall View" /></div>
+          <div class="field"><label>Unit Area (sqm)</label><input id="area" type="number" step="0.0001" placeholder="36.53" /></div>
+          <div class="field"><label>List Price</label><input id="listPrice" type="number" step="0.01" placeholder="5532000" /></div>
+        </div>
+      </div>
+
+      <!-- 2) Pricing & Discounts -->
+      <div class="card">
+        <h2>Pricing & Discounts</h2>
+        <div class="subtle">Enter amount (e.g. 120000) or percent (e.g. 5%) in each discount. Discounts are applied successively.</div>
+        <div class="grid two" style="margin-top:10px;">
+          <div class="field"><label>Standard Discount</label><input id="disc1" placeholder="21% or 116000" /></div>
+          <div class="field"><label>Special Discount</label><input id="disc2" placeholder="5% or 50000" /></div>
+          <div class="field"><label>Additional Discount</label><input id="disc3" placeholder="1% or 10000" /></div>
+          <div class="field"><label>Rebate Discount</label><input id="disc4" placeholder="1.5% or 20000" /></div>
+        </div>
+      </div>
+
+      <!-- 3) Payment Term Details -->
+      <div class="card">
+        <h2>Payment Term Details</h2>
+        <div class="seg" style="margin-bottom:10px;">
+          <button type="button" class="pt-btn active" data-pt="spot">Spot DP (Cash)</button>
+          <button type="button" class="pt-btn" data-pt="split">Split (Spot + Monthly)</button>
+          <button type="button" class="pt-btn" data-pt="spread">Spread DP (Preselling)</button>
+        </div>
+        <!-- Common fields -->
+        <div class="grid two">
+          <div class="field"><label>Downpayment % of TAP</label><input id="dpPct" type="number" step="0.0001" placeholder="5" /></div>
+          <div class="field"><label>Reservation Fee</label><input id="resFee" type="number" step="0.01" placeholder="25000" /></div>
+
+          <div class="field pt-split pt-spread"><label>Downpayment (Equity) % of TAP</label><input id="eqPct" type="number" step="0.0001" placeholder="5" /></div>
+          <div class="field pt-split pt-spread"><label>No. of Months (Equity)</label><input id="months" type="number" step="1" placeholder="12" /></div>
+        </div>
+      </div>
+
+      <!-- 4) Charges & VAT -->
+      <div class="card">
+        <h2>Other Charges & VAT</h2>
+        <div class="grid two">
+          <div class="field"><label>Other Charges % (of Net List Price)</label><input id="ocPct" type="number" step="0.0001" placeholder="3" /></div>
+          <div class="field"><label>VAT % (auto-applies only if NLP &gt; 3,600,000)</label><input id="vatPct" type="number" step="0.0001" placeholder="12" /></div>
+        </div>
+        <div class="subtle" style="margin-top:6px;">VAT is automatically set to <b>0</b> when Net List Price ≤ 3,600,000.</div>
+      </div>
+
+      <!-- 5) Bank Interest (before compute) -->
+      <div class="card">
+        <h2>Bank Interest (Annual)</h2>
+        <div class="grid two">
+          <div class="field"><label>Interest % (Annual)</label><input id="bankRate" type="number" step="0.0001" placeholder="7" /></div>
+        </div>
+        <div class="subtle" style="margin-top:6px;">Amortization for 5/10/15/20 years will be computed from Remaining Balance.</div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="card">
+        <div class="actions">
+          <button class="btn ghost" id="resetBtn" type="button">Reset</button>
+          <button class="btn primary" id="computeBtn" type="button">Compute &amp; Show Summary</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTPUT SECTION (Summary Only) -->
+    <div class="output-section">
+      <!-- Quotation Summary: Project Details card -->
+      <div class="card">
+        <h2>Project Details</h2>
+        <div class="summary-grid" id="projSummary"></div>
+      </div>
+
+      <!-- Quotation Summary: Pricing card -->
+      <div class="card">
+        <h2>Quotation Summary</h2>
+        <div class="summary-grid" id="sumGrid"></div>
+        <div class="spacer"></div>
+        <div class="kv" style="border:2px solid var(--brand);">
+          <div class="k hl">TOTAL AMOUNT PAYABLE</div>
+          <div class="v" id="tapOut">—</div>
+        </div>
+      </div>
+
+      <!-- Bank Financing card -->
+      <div class="card">
+        <h2>Bank Financing</h2>
+        <div class="summary-grid" id="bankGrid"></div>
+      </div>
+
+      <!-- Agent Details -->
+      <div class="card">
+        <h2>Property Consultant</h2>
+        <div class="grid two">
+          <div class="field"><label>Name</label><input id="agentName" placeholder="Your Full Name" /></div>
+          <div class="field"><label>Contact No.</label><input id="agentPhone" placeholder="+63 9XX XXX XXXX" /></div>
+          <div class="field"><label>Position</label><input id="agentRole" placeholder="Property Consultant" /></div>
+        </div>
+      </div>
+
+      <!-- Actions for output -->
+      <div class="card">
+        <div class="actions">
+          <button class="btn ghost" id="backBtn" type="button">Back to Edit</button>
+          <button class="btn primary" id="savePdfBtn" type="button">Save as PDF</button>
+        </div>
+        <div class="subtle" style="margin-top:8px; font-style:italic; color:#6b7280;">
+          This computation is for presentation purposes only and may change without prior notice.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Helper: format currency with no rounding beyond 2 decimals
+function fmt(n){
+  if (isNaN(n)) return '—';
+  return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 2 }).format(n);
+}
+// Parse discount field: "5%" -> percent of base, "12000" -> absolute
+function parseDiscountToken(token){
+  if(!token) return {kind:'none', value:0};
+  token = (''+token).trim();
+  if(token === '') return {kind:'none', value:0};
+  if(token.endsWith('%')){
+    const v = parseFloat(token.slice(0,-1));
+    if(isNaN(v)) return {kind:'none',value:0};
+    return {kind:'pct', value:v/100};
+  }
+  const v = parseFloat(token);
+  if(isNaN(v)) return {kind:'none',value:0};
+  return {kind:'amt', value:v};
+}
+
+// Payment Term UI switching
+const segBtns = document.querySelectorAll('.pt-btn');
+let currentPT = 'spot';
+function applyPTUI(){
+  currentPT = document.querySelector('.pt-btn.active')?.dataset.pt || 'spot';
+  document.querySelectorAll('.pt-split, .pt-spread').forEach(e=>e.style.display='none');
+  if(currentPT === 'split'){
+    document.querySelectorAll('.pt-split').forEach(e=>e.style.display='block');
+  }else if(currentPT === 'spread'){
+    document.querySelectorAll('.pt-spread').forEach(e=>e.style.display='block');
+  }
+}
+segBtns.forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    segBtns.forEach(b=>b.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    applyPTUI();
+  })
+});
+applyPTUI();
+
+// Today
+document.getElementById('today').textContent = new Date().toLocaleDateString('en-PH', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+
+// Compute
+function computeAll(){
+  // Inputs
+  const project = {
+    name: document.getElementById('projName').value || '',
+    type: document.getElementById('unitType').value || '',
+    unit: document.getElementById('unitId').value || '',
+    view: document.getElementById('view').value || '',
+    area: parseFloat(document.getElementById('area').value || '0'),
+    list: parseFloat(document.getElementById('listPrice').value || '0')
+  };
+
+  // Discounts, successive
+  let work = project.list;
+  const dTokens = [
+    parseDiscountToken(document.getElementById('disc1').value),
+    parseDiscountToken(document.getElementById('disc2').value),
+    parseDiscountToken(document.getElementById('disc3').value),
+    parseDiscountToken(document.getElementById('disc4').value)
+  ];
+  const discountLines = [];
+  dTokens.forEach((t, idx)=>{
+    let less = 0;
+    if(t.kind==='pct'){
+      less = work * t.value;
+      work -= less;
+      discountLines.push({label:['Standard','Special','Additional','Rebate'][idx]+' Discount', val: less, note: (t.value*100).toFixed(4)+'%'});
+    } else if(t.kind==='amt'){
+      less = Math.min(work, t.value);
+      work -= less;
+      discountLines.push({label:['Standard','Special','Additional','Rebate'][idx]+' Discount', val: less, note: 'amount'});
+    }
+  });
+  const netList = work;
+
+  // Other charges & VAT
+  const ocPct = parseFloat(document.getElementById('ocPct').value || '0')/100;
+  const vatPct = parseFloat(document.getElementById('vatPct').value || '0')/100;
+  const otherCharges = netList * ocPct;
+  const vat = (netList > 3600000) ? (netList * vatPct) : 0;
+  const tap = netList + otherCharges + vat;
+
+  // Payment term
+  const dpPct = parseFloat(document.getElementById('dpPct').value || '0')/100;
+  const resFee = parseFloat(document.getElementById('resFee').value || '0');
+  const eqPct = parseFloat(document.getElementById('eqPct').value || '0')/100;
+  const months = parseInt(document.getElementById('months').value || '0',10);
+  const bankRate = parseFloat(document.getElementById('bankRate').value || '0')/100;
+
+  let dp = tap * dpPct;
+  let netDP = dp - resFee;
+  if(netDP < 0) netDP = 0;
+
+  let equity = 0, monthlyEq = 0;
+  if(currentPT === 'split' || currentPT === 'spread'){
+    equity = tap * eqPct;
+    monthlyEq = months>0 ? (equity / months) : 0;
+  }
+  if(currentPT === 'spot'){
+    equity = 0; monthlyEq = 0;
+  }
+
+  let remaining = tap - dp - equity;
+  if(remaining < 0) remaining = 0;
+
+  // Bank amortization from remaining
+  function amort(P, annualRate, years){
+    if(P<=0 || annualRate<=0 || years<=0) return 0;
+    const i = annualRate/12;
+    const n = years*12;
+    const m = P * i / (1 - Math.pow(1+i,-n));
+    return m;
+  }
+  const bank = {
+    y5: amort(remaining, bankRate, 5),
+    y10: amort(remaining, bankRate, 10),
+    y15: amort(remaining, bankRate, 15),
+    y20: amort(remaining, bankRate, 20),
+  };
+
+  // ==== Populate Output ====
+  // Project details card
+  const projSummary = document.getElementById('projSummary');
+  projSummary.innerHTML = [
+    {k:'Project', v: project.name},
+    {k:'Unit Type', v: project.type},
+    {k:'Unit', v: project.unit},
+    {k:'View', v: project.view},
+    {k:'Area (sqm)', v: (project.area||'')+''}
+  ].map(x=>`<div class="kv"><div class="k hl">${x.k}</div><div class="v">${x.v || '—'}</div></div>`).join('');
+
+  // Pricing grid
+  const sumGrid = document.getElementById('sumGrid');
+  const priceRows = [
+    {k:'List Price', v: fmt(project.list)},
+  ].concat(
+    discountLines.map(d=>({k:d.label, v:`<span class="hl">${fmt(d.val)}</span> <span class="muted">(${d.note})</span>`}))
+  ).concat([
+    {k:'Net List Price', v: fmt(netList)},
+    {k:'Other Charges', v: fmt(otherCharges)},
+    {k: (netList>3600000 ? 'VAT (Applied)' : 'VAT (Exempt)'), v: fmt(vat)},
+  ]);
+  sumGrid.innerHTML = priceRows.map(x=>`<div class="kv"><div class="k hl">${x.k}</div><div class="v">${x.v}</div></div>`).join('');
+  document.getElementById('tapOut').textContent = fmt(tap);
+
+  // Bank card
+  const bankGrid = document.getElementById('bankGrid');
+  bankGrid.innerHTML = [
+    {k:'Downpayment', v: fmt(dp)},
+    {k:'Reservation Fee', v: `<span class="hl">${fmt(resFee)}</span>`},
+    {k:'Net Downpayment', v: fmt(netDP)},
+    (currentPT==='split' || currentPT==='spread') ? {k:'Downpayment (Equity)', v: fmt(equity)} : null,
+    (currentPT==='split' || currentPT==='spread') ? {k:'No. of Months', v: (months||'—')} : null,
+    (currentPT==='split' || currentPT==='spread') ? {k:'Monthly Amortization (Equity)', v: `<span class="hl">${fmt(monthlyEq)}</span>`} : null,
+    {k:'Remaining Balance', v: fmt(remaining)},
+    {k:'Interest (Annual)', v: ((bankRate*100)||0).toFixed(4)+'%'},
+    {k:'5 yrs Est. Monthly', v: fmt(bank.y5)},
+    {k:'10 yrs Est. Monthly', v: fmt(bank.y10)},
+    {k:'15 yrs Est. Monthly', v: fmt(bank.y15)},
+    {k:'20 yrs Est. Monthly', v: fmt(bank.y20)},
+  ].filter(Boolean).map(x=>`<div class="kv"><div class="k hl">${x.k}</div><div class="v">${x.v}</div></div>`).join('');
+
+  // Toggle to output-only mode
+  document.body.classList.add('is-output-only');
+}
+
+document.getElementById('computeBtn').addEventListener('click', computeAll);
+document.getElementById('backBtn').addEventListener('click', function(){
+  document.body.classList.remove('is-output-only');
+});
+document.getElementById('savePdfBtn').addEventListener('click', function(){
+  window.print();
+});
+document.getElementById('resetBtn').addEventListener('click', function(){
+  document.querySelectorAll('input').forEach(i=>i.value='');
+  document.body.classList.remove('is-output-only');
+});
+
+</script>
+</body>
+</html>
