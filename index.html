@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Property Quotation — Final</title>
+<style>
+  :root{
+    --bg:#f3f6fb;
+    --card:#ffffffcc; /* frosted */
+    --stroke:#e6ecf5;
+    --text:#1b2a3a;
+    --muted:#6b7a90;
+    --brand1:#1a73e8;
+    --brand2:#3aa0ff;
+    --accent:#0ea5e9;
+    --shadow: 0 10px 30px rgba(16,24,40,.10), 0 2px 8px rgba(16,24,40,.06);
+    --radius:16px;
+    --radius-sm:12px;
+    --field-radius:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:linear-gradient(180deg,#eef3fb 0%, #f7f9ff 40%, #eef2f8 100%);font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";color:var(--text);}
+  .container{max-width:880px;margin:22px auto;padding:0 14px;}
+  .hero{
+    background: linear-gradient(135deg, rgba(38,110,255,.95), rgba(0,192,255,.92));
+    color:#fff;border-radius:22px;padding:18px 18px 16px;box-shadow:var(--shadow);position:sticky;top:8px;z-index:5;
+  }
+  .hero h1{margin:0;font-weight:800;letter-spacing:.2px;font-size:20px}
+  .hero p{margin:4px 0 0;opacity:.9;font-size:12px}
+  .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+  .card{
+    border-radius:var(--radius);
+    background:var(--card);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border:1px solid var(--stroke);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card .head{
+    background:linear-gradient(180deg, rgba(26,115,232,.96), rgba(26,115,232,.86));
+    color:#fff;padding:10px 14px;font-weight:700;letter-spacing:.3px;font-size:14px;
+  }
+  .card .body{padding:12px 12px 14px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:680px){.row{grid-template-columns:1fr 1fr}.container{padding:0 10px}}
+  @media (max-width:540px){.row{grid-template-columns:1fr}}
+  label{display:block;font-size:12px;color:var(--muted);margin:8px 2px 6px;font-weight:600}
+  input, select{
+    width:100%;padding:12px 12px;border:1px solid var(--stroke);border-radius:var(--field-radius);font-size:14px;background:#fff;outline:none;
+  }
+  input::placeholder{color:#a6b1c2}
+  .radio-pill{display:flex;flex-wrap:wrap; gap:10px}
+  .pill{
+    border-radius:999px;padding:8px 12px;border:1px solid var(--stroke);background:#fff;cursor:pointer;font-size:12px;font-weight:700;
+  }
+  .pill.active{background:linear-gradient(135deg,#1a73e8,#3aa0ff);color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+  .actions{display:flex;gap:10px;justify-content:flex-end;padding:8px 0 2px}
+  .btn{
+    border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer;box-shadow:var(--shadow);font-size:14px;
+  }
+  .btn.primary{background:linear-gradient(135deg,#1a73e8,#3aa0ff);color:#fff}
+  .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--stroke)}
+  .hidden{display:none !important}
+  /* Summary cards compact */
+  .summary .kgrid{display:grid;grid-template-columns:1fr;gap:12px}
+  .summary .scard{border:1px solid var(--stroke);border-radius:14px;background:#fff;box-shadow:var(--shadow)}
+  .summary .scard h3{margin:0;padding:10px 12px;background:#f1f5ff;border-bottom:1px solid var(--stroke);font-size:13px;letter-spacing:.2px}
+  .summary .scard .sbody{padding:10px 12px}
+  .srow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed #e7ecf6}
+  .srow:last-child{border-bottom:0}
+  .slabel{font-size:12px;color:#6b7a90;font-weight:700}
+  .svalue{font-size:13px;font-weight:800}
+  .svalue.strong{color:#1a73e8}
+  .svalue.total{font-size:14px;color:#0b57d0}
+  .note{font-size:11px;color:#66758a;margin-top:8px}
+  .footer-note{font-size:11px;color:#66758a;margin:14px 8px 22px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>Property Quotation</h1>
+      <p>Elegant brochure-style • Frosted cards • Compact for mobile</p>
+    </div>
+
+    <div id="formView" class="grid">
+      <!-- PROJECT -->
+      <section class="card">
+        <div class="head">PROJECT DETAILS</div>
+        <div class="body">
+          <div class="row">
+            <div><label>Project Name</label><input id="project" placeholder="e.g., Prime Residences"></div>
+            <div><label>Unit Type</label><input id="unitType" placeholder="e.g., 1BR with Balcony"></div>
+          </div>
+          <div class="row">
+            <div><label>Tower / Unit</label><input id="unitNo" placeholder="e.g., Tower B — 12A"></div>
+            <div><label>Floor Area (sqm)</label><input id="area" inputmode="decimal" placeholder="e.g., 32.50"></div>
+          </div>
+          <div class="row">
+            <div><label>View</label><input id="view" placeholder="e.g., City / Amenity"></div>
+            <div><label>Generated Date</label><input id="genDate" placeholder="Auto today (editable)"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICING -->
+      <section class="card">
+        <div class="head">PRICING & DISCOUNTS</div>
+        <div class="body">
+          <div class="row">
+            <div><label>List Price (₱)</label><input id="listPrice" inputmode="numeric" placeholder="e.g., 5200000"></div>
+            <div><label>Other Charges (% or ₱)</label><input id="otherCharges" placeholder="Leave blank if none"></div>
+          </div>
+          <div class="row">
+            <div><label>VAT % (auto if Net List &gt; ₱3,600,000)</label><input id="vatInput" placeholder="e.g., 12 (optional)"></div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div><label>Standard Discount (% or ₱)</label><input id="discStd" placeholder="e.g., 5% or 50000"></div>
+            <div><label>Special Discount (% or ₱)</label><input id="discSp" placeholder="e.g., 3% or 25000"></div>
+          </div>
+          <div class="row">
+            <div><label>Additional Discount (% or ₱)</label><input id="discAdd" placeholder="e.g., 2% or 15000"></div>
+            <div><label>Rebate (% or ₱)</label><input id="discReb" placeholder="e.g., 1% or 10000"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAYMENT OPTION -->
+      <section class="card">
+        <div class="head">PAYMENT TERM OPTIONS</div>
+        <div class="body">
+          <div class="radio-pill">
+            <button class="pill active" data-opt="spot">Spot DP (Cash)</button>
+            <button class="pill" data-opt="spread">Spread DP (Preselling)</button>
+            <button class="pill" data-opt="split">Split DP</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAYMENT TERM DETAILS -->
+      <section class="card">
+        <div class="head">PAYMENT TERM DETAILS</div>
+        <div class="body" id="ptFields">
+          <div class="row">
+            <div><label>Downpayment %</label><input id="dpPct" placeholder="e.g., 10"></div>
+            <div><label>Reservation Fee (₱)</label><input id="resFee" placeholder="e.g., 20000"></div>
+          </div>
+          <div class="row" id="dpEquityRow">
+            <div><label>DP Equity % (Split only)</label><input id="dpEquityPct" placeholder="e.g., 5"></div>
+            <div><label>No. of Months</label><input id="months" placeholder="e.g., 12"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BANK -->
+      <section class="card">
+        <div class="head">BANK — INTEREST SETTING</div>
+        <div class="body">
+          <div class="row">
+            <div><label>Annual Interest %</label><input id="bankRate" placeholder="e.g., 6.5"></div>
+          </div>
+          <div class="note">Used to compute 5/10/15/20 years amortization on the Remaining Balance.</div>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="computeBtn" class="btn primary">Compute</button>
+      </div>
+    </div>
+
+    <!-- SUMMARY VIEW -->
+    <div id="summaryView" class="grid hidden summary">
+      <section class="card">
+        <div class="head">SUMMARY</div>
+        <div class="body">
+          <div class="kgrid">
+            <!-- Project Details -->
+            <div class="scard">
+              <h3>Project Details</h3>
+              <div class="sbody" id="sumProject"></div>
+            </div>
+            <!-- Quotation Summary -->
+            <div class="scard">
+              <h3>Quotation Summary</h3>
+              <div class="sbody" id="sumQuote"></div>
+            </div>
+            <!-- Payment Term -->
+            <div class="scard">
+              <h3>Payment Term</h3>
+              <div class="sbody" id="sumPayment"></div>
+            </div>
+            <!-- Bank Financing -->
+            <div class="scard">
+              <h3>Bank Financing (Estimated)</h3>
+              <div class="sbody" id="sumBank"></div>
+            </div>
+            <!-- Agent -->
+            <div class="scard">
+              <h3>Agent / Property Consultant</h3>
+              <div class="sbody" id="sumAgent">
+                <div class="srow"><div class="slabel">Name</div><div class="svalue">Your Name Here</div></div>
+                <div class="srow"><div class="slabel">Contact</div><div class="svalue">+63 900 000 0000</div></div>
+                <div class="srow"><div class="slabel">Email</div><div class="svalue">you@email.com</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-note" id="genDateNote"></div>
+        </div>
+      </section>
+      <div class="actions">
+        <button id="backBtn" class="btn ghost">Back / Edit</button>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* ---------- Helpers ---------- */
+const byId = id => document.getElementById(id);
+const peso = n => isNaN(n) ? '—' : new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP',maximumFractionDigits:2}).format(n);
+const pct = n => isNaN(n) ? '—' : (Number(n).toFixed(2) + '%');
+
+function parsePercentOrAmount(val, baseForPercent){
+  if(!val) return {amount:0, label:null, isZero:true};
+  val = (''+val).trim();
+  // normalize
+  const hasPeso = /₱/.test(val);
+  const hasPct = /%/.test(val);
+  const num = Number(val.replace(/[^0-9.\-]/g,''));
+  if(isNaN(num)) return {amount:0,label:null,isZero:true};
+
+  let amount = 0, label = '';
+  if(hasPeso || (!hasPct && num > 1000)){
+    amount = num;
+    label = peso(amount);
+  }else{
+    // treat as percent
+    amount = (baseForPercent || 0) * (num/100);
+    label = pct(num);
+  }
+  const isZero = Math.abs(amount) < 1e-6;
+  return {amount, label, isZero};
+}
+
+function successiveDiscounts(listPrice, d1, d2, d3, d4){
+  // d* are strings (% or amount). Apply successively from current price.
+  const ds = [d1,d2,d3,d4];
+  let price = listPrice;
+  const details = [];
+  ds.forEach((raw, idx)=>{
+    const parsed = parsePercentOrAmount(raw, price);
+    const less = parsed.amount;
+    price = Math.max(0, price - less);
+    details.push({idx, raw, parsed, remaining:price, less});
+  });
+  return {net: price, steps:details};
+}
+
+function autoVAT(netList){
+  // 12% if net list price > 3.6M else 0
+  return netList > 3600000 ? 0.12 : 0;
+}
+
+function monthlyAnnuity(principal, annualRate, years){
+  if(!principal || principal<=0) return 0;
+  const r = (annualRate/100)/12;
+  const n = years*12;
+  if(r === 0) return principal / n;
+  return principal * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+}
+
+function addSRow(container, label, value, opts={}){
+  if(value === null || value === undefined || value === '' || (typeof value==='number' && isNaN(value))) return;
+  const wrap = document.createElement('div'); wrap.className='srow';
+  const l = document.createElement('div'); l.className='slabel'; l.textContent = label;
+  const v = document.createElement('div'); v.className='svalue ' + (opts.strong?'strong':'') + (opts.total?' total':'');
+  v.textContent = opts.isMoney ? peso(value) : (opts.isPct ? pct(value) : (typeof value==='number'? value.toLocaleString(): value));
+  wrap.appendChild(l); wrap.appendChild(v); container.appendChild(wrap);
+}
+
+function clearChildren(el){while(el.firstChild) el.removeChild(el.firstChild);}
+
+/* ---------- UI Behavior ---------- */
+// Payment option toggle
+const pills = document.querySelectorAll('.pill');
+let payOpt = 'spot';
+pills.forEach(p=>p.addEventListener('click', ()=>{
+  pills.forEach(x=>x.classList.remove('active'));
+  p.classList.add('active');
+  payOpt = p.dataset.opt;
+  // Show/Hide fields
+  if(payOpt==='spot'){
+    byId('dpEquityRow').classList.remove('hidden');
+    // For spot: equity % not used, months optional (usually 0)
+  }else if(payOpt==='spread'){
+    byId('dpEquityRow').classList.add('hidden'); // no equity % for spread
+  }else if(payOpt==='split'){
+    byId('dpEquityRow').classList.remove('hidden'); // equity % used
+  }
+}));
+
+// Default gen date today
+(function setToday(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  byId('genDate').value = `${yyyy}-${mm}-${dd}`;
+})();
+
+/* ---------- Compute Flow ---------- */
+byId('computeBtn').addEventListener('click', ()=>{
+  // Inputs
+  const listPrice = Number(byId('listPrice').value.replace(/[^0-9.]/g,'')) || 0;
+
+  const ocRaw = byId('otherCharges').value;
+  // We'll treat % or ₱; base for % is Net List Price (after discounts) per earlier agreement.
+  const vatManual = byId('vatInput').value; // optional override (%)
+
+  const dStd = byId('discStd').value;
+  const dSp  = byId('discSp').value;
+  const dAdd = byId('discAdd').value;
+  const dReb = byId('discReb').value;
+
+  const dpPct = Number(byId('dpPct').value);
+  const resFee = Number(byId('resFee').value.replace(/[^0-9.]/g,'')) || 0;
+  const months = Number(byId('months').value) || 0;
+  const dpEquityPct = Number(byId('dpEquityPct').value) || 0;
+  const bankRate = Number(byId('bankRate').value) || 0;
+
+  // Successive discounts
+  const ds = successiveDiscounts(listPrice, dStd, dSp, dAdd, dReb);
+  const netList = ds.net;
+
+  // Other charges (on net list)
+  const ocParsed = parsePercentOrAmount(ocRaw, netList);
+  const otherCharges = ocParsed.amount;
+
+  // VAT
+  let vatRate = vatManual ? Number(String(vatManual).replace(/[^0-9.]/g,'')) / 100 : autoVAT(netList);
+  if(!vatManual && vatRate===0) { /* keep 0 */ }
+  const vatAmount = (netList + otherCharges) * vatRate;
+
+  // TAP
+  const TAP = netList + otherCharges + vatAmount;
+
+  // Payment Term computations
+  let DP = 0, NetDP = 0, Monthly = 0, Remaining = 0, DPEquity = 0;
+  if(payOpt==='spot'){
+    DP = TAP * (isFinite(dpPct)? dpPct/100 : 0);
+    NetDP = Math.max(0, DP - resFee);
+    Remaining = Math.max(0, TAP - DP);
+    Monthly = 0; // not applicable
+  }else if(payOpt==='spread'){
+    DP = TAP * (isFinite(dpPct)? dpPct/100 : 0); // this DP is equity
+    NetDP = Math.max(0, DP - resFee);
+    Monthly = months>0 ? (NetDP / months) : 0;
+    Remaining = Math.max(0, TAP - DP);
+  }else if(payOpt==='split'){
+    DP = TAP * (isFinite(dpPct)? dpPct/100 : 0);
+    NetDP = Math.max(0, DP - resFee);
+    DPEquity = TAP * (isFinite(dpEquityPct)? dpEquityPct/100 : 0);
+    Monthly = months>0 ? (DPEquity / months) : 0;
+    Remaining = Math.max(0, TAP - DP);
+  }
+
+  // Build Summary
+  // Project
+  const sumProject = byId('sumProject'); clearChildren(sumProject);
+  addSRow(sumProject,'Project', byId('project').value);
+  addSRow(sumProject,'Unit Type', byId('unitType').value);
+  addSRow(sumProject,'Tower / Unit', byId('unitNo').value);
+  addSRow(sumProject,'Floor Area', byId('area').value ? Number(byId('area').value) : null);
+  addSRow(sumProject,'View', byId('view').value);
+
+  // Quotation
+  const sumQuote = byId('sumQuote'); clearChildren(sumQuote);
+  addSRow(sumQuote,'List Price', listPrice, {isMoney:true, strong:true});
+  // Discount steps with auto-hide if empty
+  const names = ['Standard Discount','Special Discount','Additional Discount','Rebate'];
+  [dStd,dSp,dAdd,dReb].forEach((raw, i)=>{
+    if(raw && String(raw).trim()!==''){
+      const step = ds.steps[i];
+      const label = step.parsed.label || '';
+      addSRow(sumQuote, names[i], label.includes('%')? Number(label.replace(/[^0-9.]/g,'')) : step.less, {
+        isPct: label.includes('%'),
+        isMoney: !label.includes('%'),
+      });
+    }
+  });
+  addSRow(sumQuote,'Net List Price', netList, {isMoney:true, strong:true});
+  if(!ocParsed.isZero) addSRow(sumQuote, 'Other Charges', ocParsed.parsed && ocParsed.parsed.label && /%/.test(ocParsed.parsed.label) ? Number(ocParsed.parsed.label.replace(/[^0-9.]/g,'')) : otherCharges, {isPct: ocParsed.parsed && /%/.test(ocParsed.parsed.label), isMoney: !(ocParsed.parsed && /%/.test(ocParsed.parsed.label))});
+  if(vatAmount>0) addSRow(sumQuote,'VAT', vatAmount, {isMoney:true, strong:true});
+  addSRow(sumQuote,'TOTAL AMOUNT PAYABLE', TAP, {isMoney:true, total:true});
+
+  // Payment Term
+  const sumPayment = byId('sumPayment'); clearChildren(sumPayment);
+  addSRow(sumPayment,'Payment Scheme', payOpt==='spot'?'Spot DP (Cash)':(payOpt==='spread'?'Spread DP (Preselling)':'Split DP'));
+  addSRow(sumPayment,'Downpayment', DP, {isMoney:true, strong:true});
+  addSRow(sumPayment,'Reservation Fee', resFee, {isMoney:true});
+  addSRow(sumPayment,'Net Downpayment', NetDP, {isMoney:true, strong:true});
+  if(payOpt==='split' && dpEquityPct){ addSRow(sumPayment,'DP Equity', DPEquity, {isMoney:true}); }
+  if(Monthly>0) addSRow(sumPayment, 'Monthly Amortization', Monthly, {isMoney:true, strong:true});
+  addSRow(sumPayment,'No. of Months', months || null);
+  addSRow(sumPayment,'Remaining Balance', Remaining, {isMoney:true, strong:true});
+
+  // Bank
+  const sumBank = byId('sumBank'); clearChildren(sumBank);
+  addSRow(sumBank,'Interest (annual)', bankRate || null, {isPct:true});
+  [5,10,15,20].forEach(y=>{
+    const m = monthlyAnnuity(Remaining, bankRate, y);
+    addSRow(sumBank, `${y} yrs Est. Amortization`, m, {isMoney:true});
+  });
+
+  // Date footer
+  const gd = byId('genDate').value || new Date().toISOString().slice(0,10);
+  byId('genDateNote').textContent = `Generated on ${gd}`;
+
+  // Toggle views
+  byId('formView').classList.add('hidden');
+  byId('summaryView').classList.remove('hidden');
+});
+
+byId('backBtn').addEventListener('click', ()=>{
+  byId('summaryView').classList.add('hidden');
+  byId('formView').classList.remove('hidden');
+});
+
+// Minor: style active pill default relationships
+// ensure correct initial field visibility
+(function init(){
+  payOpt='spot';
+  byId('dpEquityRow').classList.remove('hidden'); // show but user may leave months 0
+})();
+</script>
+</body>
+</html>
