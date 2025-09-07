@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Property Quotation (Final)</title>
+<style>
+  :root{
+    --brand:#1a5cff;
+    --brand-2:#3a7afe;
+    --ink:#0b1b3a;
+    --sub:#64708b;
+    --muted:#a7b1c2;
+    --card-bg:rgba(255,255,255,0.72);
+    --glass-border:rgba(255,255,255,0.55);
+    --page:#ffffff;
+    --accent:#0e4297;
+    --shadow:0 6px 18px rgba(16, 41, 85, .10);
+    --radius:14px;
+    --gap:14px;
+    --pad:14px;
+    --fs-base:14px;
+    --fs-small:12.5px;  /* summary compact */
+    --fs-head:15px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--page);color:var(--ink);font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";}
+  .wrap{max-width:1120px;margin:0 auto;padding:18px;}
+
+  /* HEADER */
+  .hero{
+    position:sticky;top:0;z-index:5;
+    margin-bottom:18px;
+    border-radius:18px;
+    background:
+      radial-gradient(1200px 240px at 10% -50%, rgba(47,116,255,.20), transparent 70%),
+      radial-gradient(1000px 300px at 90% -60%, rgba(24,72,196,.18), transparent 75%),
+      linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.82));
+    backdrop-filter: blur(10px);
+    border:1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    padding:14px 16px;
+  }
+  .hero h1{
+    margin:0;font-size:17px;letter-spacing:.2px;font-weight:700;color:var(--ink);
+  }
+  .hero p{margin:4px 0 0;color:var(--sub);font-size:12.5px}
+
+  /* GRID */
+  .grid-2{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:var(--gap);}
+  .grid-3{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:var(--gap);}
+  .stack{display:grid;gap:var(--gap);}
+
+  /* CARD */
+  .card{
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border:1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .card .head{
+    padding:10px 12px;
+    background:linear-gradient(135deg, var(--brand), var(--brand-2));
+    color:#fff;border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+    font-weight:700;font-size:var(--fs-head);letter-spacing:.15px;
+  }
+  .card .body{padding:var(--pad);}
+
+  /* INPUTS */
+  label{display:block;font-size:12px;color:var(--sub);margin:2px 0 6px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  input, select{
+    width:100%;appearance:none;
+    border:1px solid rgba(18,36,68,.14);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:var(--fs-base);
+    background:rgba(255,255,255,.9);
+    outline:none;
+  }
+  input::placeholder{color:#b6bfcc}
+  .mini{font-size:12px;color:var(--muted)}
+
+  /* BUTTONS */
+  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{
+    border:0;border-radius:12px;padding:10px 14px;
+    font-weight:700;letter-spacing:.2px;cursor:pointer;
+    box-shadow:0 8px 18px rgba(26,92,255,.18);
+  }
+  .btn-primary{background:linear-gradient(135deg, var(--brand), var(--brand-2));color:#fff;}
+  .btn-ghost{background:rgba(24,72,196,.08);color:var(--accent)}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg .opt{
+    padding:8px 12px;border-radius:10px;border:1px solid rgba(24,72,196,.25);
+    background:rgba(255,255,255,.9);cursor:pointer;font-size:13px;color:var(--accent);font-weight:700;
+  }
+  .seg .opt.active{background:linear-gradient(135deg, var(--brand), var(--brand-2));color:#fff;border-color:transparent}
+
+  /* SUMMARY */
+  .results{display:none}
+  .kv{display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px 0;border-bottom:1px dashed rgba(10,20,40,.15)}
+  .kv:last-child{border-bottom:0}
+  .label{color:#224; font-weight:700}
+  .value{font-weight:700;color:#0a2266}
+  .muted{color:var(--sub)}
+  .emph{color:#0a3aa1;font-weight:800}
+  .note{font-style:italic;color:#9aa3b6;font-size:12px;margin-top:8px}
+
+  /* SUMMARY FONT SIZE (compact) */
+  .summary .body, .bank .body, .agent .body, .proj .body{font-size:var(--fs-small)}
+
+  /* MOBILE */
+  @media (max-width: 760px){
+    .grid-2{grid-template-columns:1fr}
+    .grid-3{grid-template-columns:1fr 1fr}
+    .hero h1{font-size:16px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="hero card">
+      <h1>Property Quotation</h1>
+      <p>Elegant brochure-style calculator • Frosted UI • Compact for mobile</p>
+    </div>
+
+    <!-- INPUT AREA -->
+    <div id="inputArea" class="stack inputs-area">
+
+      <!-- Project Details -->
+      <div class="card">
+        <div class="head">PROJECT DETAILS</div>
+        <div class="body grid-2">
+          <div class="field">
+            <label>Project Name</label>
+            <input id="projName" placeholder="e.g., Shore Residences" />
+          </div>
+          <div class="field">
+            <label>Unit Type</label>
+            <input id="unitType" placeholder="e.g., 1BR with Balcony" />
+          </div>
+          <div class="field">
+            <label>Tower / Unit</label>
+            <input id="towerUnit" placeholder="e.g., Tower C — 12A" />
+          </div>
+          <div class="field">
+            <label>View</label>
+            <input id="view" placeholder="e.g., Amenity / City" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing & Discounts -->
+      <div class="card">
+        <div class="head">PRICING &amp; DISCOUNTS</div>
+        <div class="body grid-2">
+          <div class="field">
+            <label>List Price (₱)</label>
+            <input id="listPrice" inputmode="decimal" placeholder="e.g., 5200000" />
+            <div class="mini">Enter amount only</div>
+          </div>
+
+          <div class="field">
+            <label>Other Charges (₱)</label>
+            <input id="otherCharges" inputmode="decimal" placeholder="Leave blank if none" />
+          </div>
+
+          <div class="field">
+            <label>VAT %</label>
+            <input id="vatPercent" inputmode="decimal" placeholder="e.g., 12" />
+            <div class="mini">Auto applies only if Net List Price &gt; ₱3,600,000</div>
+          </div>
+
+          <!-- Discounts (each accepts % or amount) -->
+          <div class="field">
+            <label>Standard Discount (% or ₱)</label>
+            <input id="disc1" placeholder="e.g., 5% or 50000" />
+          </div>
+          <div class="field">
+            <label>Special Discount (% or ₱)</label>
+            <input id="disc2" placeholder="e.g., 3% or 25000" />
+          </div>
+          <div class="field">
+            <label>Additional Discount (% or ₱)</label>
+            <input id="disc3" placeholder="e.g., 2% or 15000" />
+          </div>
+          <div class="field">
+            <label>Rebate (% or ₱)</label>
+            <input id="disc4" placeholder="e.g., 1% or 10000" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Term Options -->
+      <div class="card">
+        <div class="head">PAYMENT TERM OPTIONS</div>
+        <div class="body">
+          <div class="seg" id="termSeg">
+            <div class="opt active" data-term="spot">Spot DP (Cash)</div>
+            <div class="opt" data-term="spread">Spread DP (Preselling)</div>
+            <div class="opt" data-term="split">Split DP</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Term Details (fields vary by selection) -->
+      <div class="card">
+        <div class="head">PAYMENT TERM DETAILS</div>
+        <div class="body grid-2" id="termFields">
+          <!-- Dynamic fields go here -->
+        </div>
+      </div>
+
+      <!-- Bank Interest (single input before Compute) -->
+      <div class="card">
+        <div class="head">BANK — INTEREST SETTING</div>
+        <div class="body grid-2">
+          <div class="field">
+            <label>Annual Interest %</label>
+            <input id="interest" inputmode="decimal" placeholder="e.g., 8" />
+            <div class="mini">Used for 5/10/15/20 yrs amortization (on remaining balance)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions (Compute at bottom before summary) -->
+      <div class="card">
+        <div class="body actions">
+          <button id="computeBtn" class="btn btn-primary">Compute</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS AREA -->
+    <div id="resultsArea" class="results stack">
+
+      <!-- Project details (summary view) -->
+      <div class="card proj">
+        <div class="head">PROJECT DETAILS</div>
+        <div class="body" id="projSummary">
+          <!-- compact kvs filled by JS -->
+        </div>
+      </div>
+
+      <!-- Quotation Summary -->
+      <div class="card summary">
+        <div class="head">QUOTATION SUMMARY</div>
+        <div class="body" id="quoteSummary">
+          <!-- kv pairs injected -->
+        </div>
+      </div>
+
+      <!-- Payment Term Summary -->
+      <div class="card summary">
+        <div class="head">PAYMENT TERM DETAILS</div>
+        <div class="body" id="termSummary">
+          <!-- kv pairs injected -->
+        </div>
+      </div>
+
+      <!-- Bank Amortization -->
+      <div class="card bank">
+        <div class="head">BANK FINANCING — AMORTIZATION</div>
+        <div class="body" id="bankSummary">
+          <!-- kv pairs injected -->
+          <div class="note">This computation is for presentation purposes only and may change without prior notice.</div>
+        </div>
+      </div>
+
+      <!-- Agent -->
+      <div class="card agent">
+        <div class="head">PREPARED BY — PROPERTY CONSULTANT</div>
+        <div class="body grid-2" id="agentSummary">
+          <div class="field">
+            <label>Name</label>
+            <input id="agentName" placeholder="Enter name" />
+          </div>
+          <div class="field">
+            <label>Mobile No.</label>
+            <input id="agentMobile" placeholder="Enter contact number" />
+          </div>
+          <div class="field">
+            <label>Position</label>
+            <input id="agentPosition" placeholder="e.g., Property Consultant" />
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input id="genDate" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="body actions">
+          <button id="backBtn" class="btn btn-ghost">Back / Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // ---------- Helpers ----------
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+  const money = (n) => "₱" + (isFinite(n) ? Number(n).toLocaleString('en-PH', {maximumFractionDigits: 0}) : "—");
+  const pct = (n) => isFinite(n) ? (Number(n).toLocaleString(undefined, {maximumFractionDigits:2}) + "%") : "—";
+
+  const num = (v) => {
+    if (v==null) return 0;
+    if (typeof v === 'number') return v;
+    v = (""+v).replace(/[, ₱]/g,'');
+    const x = parseFloat(v);
+    return isFinite(x) ? x : 0;
+  };
+
+  const isBlank = (v) => (v==null || (""+v).trim()==="");
+
+  // Parse "% or amount" input into an AMOUNT using given base
+  function parsePctOrAmt(value, base){
+    if (isBlank(value)) return {amount:0, used:false, kind:"none", raw:""};
+    const s = (""+value).trim();
+    if (/%$/.test(s)){
+      const p = num(s.replace('%',''));
+      const amt = base * (p/100);
+      return {amount:amt, used:true, kind:"percent", p};
+    } else {
+      const amt = num(s);
+      return {amount:amt, used:true, kind:"amount", a:amt};
+    }
+  }
+
+  function addKV(container, label, value, options={}){
+    const {bold=false, hideIfZero=false, hideIfBlank=false} = options;
+    if (hideIfBlank && (value===null || value===undefined || value==="")) return;
+    if (hideIfZero && (Number(value)===0)) return;
+    const row = document.createElement('div');
+    row.className = 'kv';
+    const l = document.createElement('div'); l.className = 'label';
+    const v = document.createElement('div'); v.className = 'value';
+    l.textContent = label;
+    if (bold) l.classList.add('emph');
+    v.textContent = value;
+    container.appendChild(row);
+    row.appendChild(l); row.appendChild(v);
+  }
+
+  function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+
+  // ---------- Payment Term dynamic fields ----------
+  const termSeg = $('#termSeg');
+  const termFields = $('#termFields');
+  let activeTerm = 'spot';
+
+  function renderTermFields(){
+    clear(termFields);
+    if (activeTerm==='spot'){
+      termFields.appendChild(field('Downpayment %','dpPct','e.g., 100'));
+      termFields.appendChild(field('Reservation Fee (₱)','resFee','e.g., 20000'));
+      termFields.appendChild(field('No. of Months','months','e.g., 0 (cash)'));
+    } else if (activeTerm==='spread'){
+      termFields.appendChild(field('Downpayment % (equity)','dpPct','e.g., 10'));
+      termFields.appendChild(field('Reservation Fee (₱)','resFee','e.g., 20000'));
+      termFields.appendChild(field('No. of Months','months','e.g., 24'));
+    } else if (activeTerm==='split'){
+      termFields.appendChild(field('Downpayment %','dpPct','e.g., 5'));
+      termFields.appendChild(field('Reservation Fee (₱)','resFee','e.g., 20000'));
+      termFields.appendChild(field('DP Equity %','dpEqPct','e.g., 10'));
+      termFields.appendChild(field('No. of Months','months','e.g., 12'));
+    }
+  }
+  function field(labelText, id, ph){
+    const wrap = document.createElement('div');
+    wrap.className = 'field';
+    const lab = document.createElement('label'); lab.textContent = labelText;
+    const inp = document.createElement('input'); inp.id = id; inp.placeholder = ph; if(id==='months') inp.inputMode='numeric';
+    wrap.appendChild(lab); wrap.appendChild(inp);
+    return wrap;
+  }
+  termSeg.addEventListener('click', (e)=>{
+    const opt = e.target.closest('.opt'); if(!opt) return;
+    $$('.seg .opt', termSeg).forEach(x=>x.classList.remove('active'));
+    opt.classList.add('active');
+    activeTerm = opt.dataset.term;
+    renderTermFields();
+  });
+  renderTermFields();
+
+  // ---------- Compute ----------
+  $('#computeBtn').addEventListener('click', computeAll);
+  $('#backBtn').addEventListener('click', ()=>{
+    $('#resultsArea').style.display='none';
+    $('#inputArea').style.display='grid';
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  function computeAll(){
+    // Inputs
+    const listPrice = num($('#listPrice').value);
+    const otherCharges = num($('#otherCharges').value);
+    const vatPercent = num($('#vatPercent').value || 12);
+
+    // Successive discounts
+    let base = listPrice;
+    const d1 = parsePctOrAmt($('#disc1').value, base); base -= d1.amount;
+    const d2 = parsePctOrAmt($('#disc2').value, base); base -= d2.amount;
+    const d3 = parsePctOrAmt($('#disc3').value, base); base -= d3.amount;
+    const d4 = parsePctOrAmt($('#disc4').value, base); base -= d4.amount;
+
+    const totalDiscounts = d1.amount + d2.amount + d3.amount + d4.amount;
+    const netListPrice = Math.max(0, listPrice - totalDiscounts);
+    const preVATBase = netListPrice + (isBlank($('#otherCharges').value) ? 0 : otherCharges);
+    const vat = (netListPrice > 3600000) ? preVATBase * (vatPercent/100) : 0;
+    const TAP = preVATBase + vat;
+
+    // Payment term fields
+    const dpPct = num($('#dpPct')?.value);
+    const resFee = num($('#resFee')?.value);
+    const months = Math.max(0, Math.floor(num($('#months')?.value)));
+    const dpEqPct = num($('#dpEqPct')?.value);
+
+    // Computations by term
+    let DP = 0, NetDP = 0, DPEquity = 0, Monthly = 0, Remaining = 0;
+
+    if (activeTerm==='spot'){
+      DP = TAP * (dpPct/100 || 1);           // if they put 100% cash
+      NetDP = DP - resFee;
+      Remaining = TAP - DP;
+      Monthly = 0;
+    } else if (activeTerm==='spread'){
+      DP = TAP * (dpPct/100);
+      NetDP = DP - resFee;
+      Monthly = months>0 ? (NetDP / months) : 0;
+      Remaining = TAP - DP;
+    } else if (activeTerm==='split'){
+      DP = TAP * (dpPct/100);
+      NetDP = DP - resFee;
+      DPEquity = TAP * (dpEqPct/100);
+      Monthly = months>0 ? (DPEquity / months) : 0;
+      Remaining = TAP - DP;
+    }
+
+    // Bank — amortization on Remaining Balance
+    const annual = num($('#interest').value);
+    const r = (annual>0) ? (annual/100/12) : 0;
+    const principal = Math.max(0, Remaining);
+    function pmt(rate, nper, pv){
+      if (rate===0) return nper>0 ? (pv/nper) : 0;
+      return pv * (rate) / (1 - Math.pow(1+rate, -nper));
+    }
+    const amort = {
+      y5:  r ? pmt(r, 60,  principal) : (principal/60 || 0),
+      y10: r ? pmt(r, 120, principal) : (principal/120 || 0),
+      y15: r ? pmt(r, 180, principal) : (principal/180 || 0),
+      y20: r ? pmt(r, 240, principal) : (principal/240 || 0),
+    };
+
+    // ---------- Build Results ----------
+    const projSummary = $('#projSummary'); clear(projSummary);
+    addKV(projSummary, "Project", $("#projName").value || "—");
+    addKV(projSummary, "Unit Type", $("#unitType").value || "—");
+    addKV(projSummary, "Tower / Unit", $("#towerUnit").value || "—");
+    addKV(projSummary, "View", $("#view").value || "—");
+    addKV(projSummary, "Date", new Date().toLocaleDateString());
+
+    const qs = $('#quoteSummary'); clear(qs);
+    addKV(qs, "List Price", money(listPrice), {bold:true});
+    if (d1.used) addKV(qs, "Standard Discount", "- " + money(d1.amount), {bold:true});
+    if (d2.used) addKV(qs, "Special Discount", "- " + money(d2.amount), {bold:true});
+    if (d3.used) addKV(qs, "Additional Discount", "- " + money(d3.amount), {bold:true});
+    if (d4.used) addKV(qs, "Rebate", "- " + money(d4.amount), {bold:true});
+    addKV(qs, "Net List Price", money(netListPrice), {bold:true});
+    if (!isBlank($('#otherCharges').value)) addKV(qs, "Other Charges", money(otherCharges), {bold:true});
+    addKV(qs, (netListPrice>3600000 ? "VAT ("+vatPercent+"%)" : "VAT (0%)"), money(vat), {bold:true});
+    addKV(qs, "TOTAL AMOUNT PAYABLE", money(TAP), {bold:true});
+
+    const ts = $('#termSummary'); clear(ts);
+    addKV(ts, "Payment Term", (activeTerm==='spot'?"Spot DP (Cash)":activeTerm==='spread'?"Spread DP (Preselling)":"Split DP"), {bold:true});
+    addKV(ts, "Downpayment (DP)", money(DP), {bold:true});
+    addKV(ts, "Reservation Fee", (resFee? money(resFee):"—"), {bold:true});
+    addKV(ts, "Net Downpayment", money(NetDP), {bold:true});
+    if (activeTerm==='split') addKV(ts, "Downpayment (Equity)", money(DPEquity), {bold:true});
+    if (months>0) addKV(ts, "No. of Months", months, {bold:true});
+    if (Monthly>0) addKV(ts, "Monthly Amortization", money(Monthly), {bold:true});
+    addKV(ts, "Remaining Balance", money(Remaining), {bold:true});
+
+    const bs = $('#bankSummary'); clear(bs);
+    addKV(bs, "Interest (Annual)", annual? pct(annual) : "—");
+    addKV(bs, "5 yrs Est. Monthly", principal? money(amort.y5) : "—", {bold:true});
+    addKV(bs, "10 yrs Est. Monthly", principal? money(amort.y10) : "—", {bold:true});
+    addKV(bs, "15 yrs Est. Monthly", principal? money(amort.y15) : "—", {bold:true});
+    addKV(bs, "20 yrs Est. Monthly", principal? money(amort.y20) : "—", {bold:true});
+
+    // Agent date autofill
+    $('#genDate').value = new Date().toLocaleDateString();
+
+    // Toggle views
+    $('#inputArea').style.display='none';
+    $('#resultsArea').style.display='grid';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // Initialize agent date on load
+  document.addEventListener('DOMContentLoaded', ()=>{
+    $('#genDate').value = new Date().toLocaleDateString();
+  });
+})();
+</script>
+</body>
+</html>
